@@ -50,7 +50,7 @@
         }
         
         .nav-toggle-btn.active .toggle-icon {
-            transform: rotate(180deg);
+            transform: rotate(90deg);
         }
         
         /* Desktop compressed menu */
@@ -74,21 +74,12 @@
             display: block;
         }
         
-        @media (max-width: 768px) {
-            .nav-toggle-btn {
-                display: flex;
-            }
-            
-            .nav-menu.compressed {
-                display: none;
-            }
-            
-            /* Ensure login button is visible on mobile */
-            .admin-login-btn {
-                display: flex !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-            }
+        /* Ensure login and cart are always visible */
+        .admin-login-btn,
+        .cart-icon {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
     </style>
 </head>
@@ -104,6 +95,11 @@
                 <div class="nav-wrapper">
                     <div class="logo"><a href="#home"><i class="fas fa-microchip"></i><span>Hulegeb Electronics</span></a></div>
                     
+                    <!-- Navigation Toggle Button - Moved before menu -->
+                    <button class="nav-toggle-btn" id="nav-toggle-btn" onclick="toggleNavMenu()" aria-label="Toggle navigation menu" title="Toggle Menu">
+                        <i class="fas fa-bars toggle-icon"></i>
+                    </button>
+                    
                     <ul class="nav-menu" id="nav-menu">
                         <li><a href="#home" class="nav-link active" data-i18n="home">Home</a></li>
                         <li><a href="#products" class="nav-link" data-i18n="products">Products</a></li>
@@ -112,27 +108,26 @@
                     </ul>
                     
                     <div class="nav-actions">
-                        <!-- Navigation Toggle Button -->
-                        <button class="nav-toggle-btn" id="nav-toggle-btn" onclick="toggleNavMenu()" aria-label="Toggle navigation menu" title="Toggle Menu">
-                            <i class="fas fa-bars toggle-icon"></i>
-                        </button>
+                        <!-- Login Button -->
+                        <a href="admin.html" class="admin-login-btn" title="Admin Login">
+                            <i class="fas fa-user-shield"></i>
+                            <span class="admin-text">Login</span>
+                        </a>
                         
+                        <!-- Language Switcher -->
                         <div class="language-switcher">
                             <button class="lang-btn active" data-lang="en">EN</button>
                             <span>|</span>
                             <button class="lang-btn" data-lang="am">አማ</button>
                         </div>
                         
-                        <a href="admin.html" class="admin-login-btn" title="Admin Login">
-                            <i class="fas fa-user-shield"></i>
-                            <span class="admin-text">Login</span>
-                        </a>
-                        
+                        <!-- Cart Icon -->
                         <div class="cart-icon" id="cart-icon">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="cart-count" id="cart-count" style="display:none;">0</span>
                         </div>
                         
+                        <!-- Hamburger -->
                         <div class="hamburger" id="hamburger">
                             <span class="bar"></span>
                             <span class="bar"></span>
@@ -144,6 +139,7 @@
         </nav>
     </header>
 
+    <!-- Rest of the HTML remains the same -->
     <section class="hero" id="home">
         <div class="hero-overlay"></div>
         <div class="container"><div class="hero-content">
@@ -169,7 +165,6 @@
         <div class="container">
             <h2 class="section-title" data-i18n="ourProducts">Our Products</h2>
             <div class="product-filters" id="product-filters">
-                <!-- Categories loaded dynamically from admin panel -->
                 <button class="filter-btn active" data-filter="all"><i class="fas fa-th-large"></i> All</button>
             </div>
             <div class="products-grid" id="products-grid"></div>
@@ -300,12 +295,10 @@
             const isMobile = window.innerWidth <= 768;
             
             if (isMobile) {
-                // Mobile behavior - show/hide menu
                 navMenu.classList.toggle('active');
                 toggleBtn.classList.toggle('active');
                 navOverlay.classList.toggle('active');
                 
-                // Change icon
                 const icon = toggleBtn.querySelector('.toggle-icon');
                 if (navMenu.classList.contains('active')) {
                     icon.className = 'fas fa-times toggle-icon';
@@ -313,11 +306,9 @@
                     icon.className = 'fas fa-bars toggle-icon';
                 }
             } else {
-                // Desktop behavior - compress/expand menu
                 navMenu.classList.toggle('compressed');
                 toggleBtn.classList.toggle('active');
                 
-                // Change icon
                 const icon = toggleBtn.querySelector('.toggle-icon');
                 if (navMenu.classList.contains('compressed')) {
                     icon.className = 'fas fa-bars toggle-icon';
@@ -370,7 +361,6 @@
                 navMenu.classList.remove('active');
                 navOverlay.classList.remove('active');
                 
-                // Keep compressed state if set
                 if (navMenu.classList.contains('compressed')) {
                     toggleBtn.classList.add('active');
                     icon.className = 'fas fa-bars toggle-icon';
@@ -384,7 +374,7 @@
             }
         });
         
-        // Keyboard shortcut: Press 'M' to toggle menu
+        // Keyboard shortcut
         document.addEventListener('keydown', function(event) {
             if (event.key === 'm' || event.key === 'M') {
                 if (!event.ctrlKey && !event.altKey && !event.shiftKey) {
@@ -392,7 +382,6 @@
                 }
             }
             
-            // Escape key closes mobile menu
             if (event.key === 'Escape') {
                 const navMenu = document.getElementById('nav-menu');
                 const toggleBtn = document.getElementById('nav-toggle-btn');
