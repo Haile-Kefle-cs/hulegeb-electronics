@@ -86,7 +86,7 @@ img {
     to { transform: rotate(360deg); }
 }
 
-/* ==================== Header ==================== */
+/* ==================== Header & Navigation ==================== */
 .header {
     position: fixed;
     top: 0;
@@ -111,8 +111,54 @@ img {
     gap: 10px;
     width: 100%;
     flex-wrap: nowrap;
+    position: relative;
 }
 
+/* Toggle Button - Left Side */
+.nav-toggle-btn {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: var(--light-background);
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--text-color);
+    padding: 8px;
+    min-height: 40px;
+    min-width: 40px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    order: -1; /* Move to left */
+    z-index: 100;
+}
+
+.nav-toggle-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.nav-toggle-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.nav-toggle-btn .toggle-icon {
+    transition: transform 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.nav-toggle-btn.active .toggle-icon {
+    transform: rotate(90deg);
+}
+
+/* Logo */
 .logo {
     flex-shrink: 0;
 }
@@ -141,12 +187,17 @@ img {
     flex-shrink: 0;
 }
 
+/* Nav Menu */
 .nav-menu {
     display: flex;
     list-style: none;
     gap: 2rem;
     margin: 0;
     padding: 0;
+}
+
+.nav-menu.compressed {
+    display: none !important;
 }
 
 .nav-link {
@@ -174,24 +225,33 @@ img {
     width: 100%;
 }
 
+/* Nav Actions */
 .nav-actions {
-    display: flex;
+    display: flex !important;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
     flex-shrink: 0;
+    min-width: 0;
+    margin-left: auto;
 }
 
+/* Login Button */
 .admin-login-btn {
-    display: flex;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     align-items: center;
     gap: 5px;
     text-decoration: none;
     color: var(--light-text);
     font-size: 0.9rem;
     transition: var(--transition);
-    min-height: 44px;
-    padding: 5px 10px;
+    min-height: 40px;
+    min-width: 40px;
+    padding: 5px 8px;
     border-radius: 5px;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .admin-login-btn:hover {
@@ -203,14 +263,53 @@ img {
     font-size: 1.2rem;
 }
 
-.admin-text {
-    white-space: nowrap;
+/* Cart Icon - Force Visible */
+.cart-icon {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: var(--transition);
+    min-height: 40px;
+    min-width: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    flex-shrink: 0;
+    z-index: 100 !important;
+    background: transparent;
 }
 
-.language-switcher {
+.cart-icon:hover {
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.cart-count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
-    gap: 5px;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* Language Switcher */
+.language-switcher {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center;
+    gap: 2px;
     flex-shrink: 0;
 }
 
@@ -224,8 +323,8 @@ img {
     padding: 8px 10px;
     transition: var(--transition);
     border-radius: 4px;
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 40px;
+    min-width: 40px;
 }
 
 .lang-btn.active {
@@ -234,50 +333,17 @@ img {
     background: rgba(37, 99, 235, 0.1);
 }
 
-.cart-icon {
-    position: relative;
-    cursor: pointer;
-    font-size: 1.3rem;
-    transition: var(--transition);
-    min-height: 44px;
-    min-width: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-}
-
-.cart-icon:hover {
-    color: var(--primary-color);
-    transform: scale(1.1);
-}
-
-.cart-count {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: var(--primary-color);
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    font-weight: 600;
-}
-
+/* Hamburger */
 .hamburger {
     display: none;
     flex-direction: column;
     cursor: pointer;
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 40px;
+    min-width: 40px;
     align-items: center;
     justify-content: center;
     border-radius: 5px;
-    transition: background 0.3s ease;
+    flex-shrink: 0;
 }
 
 .hamburger:hover {
@@ -292,7 +358,25 @@ img {
     transition: var(--transition);
 }
 
-/* ==================== Hero ==================== */
+/* Navigation Overlay */
+.nav-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+.nav-overlay.active {
+    display: block;
+}
+
+/* ==================== Hero Section ==================== */
 .hero {
     position: relative;
     min-height: 100vh;
@@ -403,7 +487,7 @@ img {
     width: 100%;
 }
 
-/* ==================== Features ==================== */
+/* ==================== Features Section ==================== */
 .features {
     padding: 4rem 0;
     background: var(--light-background);
@@ -441,6 +525,7 @@ img {
 
 .feature-card h3 {
     word-wrap: break-word;
+    margin-bottom: 0.5rem;
 }
 
 .feature-card p {
@@ -449,7 +534,7 @@ img {
     word-wrap: break-word;
 }
 
-/* ==================== Products ==================== */
+/* ==================== Products Section ==================== */
 .products {
     padding: 4rem 0;
     width: 100%;
@@ -696,7 +781,7 @@ img {
     color: white;
 }
 
-/* ==================== About ==================== */
+/* ==================== About Section ==================== */
 .about {
     padding: 4rem 0;
     background: var(--light-background);
@@ -756,7 +841,7 @@ img {
     word-wrap: break-word;
 }
 
-/* ==================== Contact ==================== */
+/* ==================== Contact Section ==================== */
 .contact {
     padding: 4rem 0;
     width: 100%;
@@ -1530,7 +1615,7 @@ img {
     flex: 1;
 }
 
-/* ==================== Responsive ==================== */
+/* ==================== Responsive Design ==================== */
 @media (max-width: 1024px) {
     .about-wrapper,
     .contact-wrapper {
@@ -1549,8 +1634,29 @@ img {
     
     /* Mobile Navigation */
     .nav-wrapper {
-        flex-wrap: nowrap;
         gap: 5px;
+    }
+    
+    .nav-toggle-btn {
+        min-width: 36px;
+        min-height: 36px;
+        padding: 6px;
+    }
+    
+    .cart-icon {
+        min-width: 36px;
+        min-height: 36px;
+        font-size: 1.1rem;
+    }
+    
+    .admin-login-btn {
+        min-width: 36px;
+        min-height: 36px;
+        padding: 4px 6px;
+    }
+    
+    .nav-actions {
+        gap: 0.25rem;
     }
     
     .logo a {
@@ -1607,17 +1713,6 @@ img {
     
     .hamburger.active .bar:nth-child(3) {
         transform: translateY(-8px) rotate(-45deg);
-    }
-    
-    /* Hide admin text on very small screens */
-    .admin-text {
-        display: none;
-    }
-    
-    .admin-login-btn {
-        padding: 5px;
-        min-width: 44px;
-        justify-content: center;
     }
     
     .hero {
@@ -1763,21 +1858,35 @@ img {
         margin-right: 3px;
     }
     
+    .logo span {
+        display: none;
+    }
+    
     .language-switcher {
-        gap: 2px;
+        gap: 0;
     }
     
     .lang-btn {
         padding: 5px;
         font-size: 0.8rem;
-        min-height: 40px;
-        min-width: 40px;
+        min-height: 36px;
+        min-width: 36px;
     }
     
-    .cart-icon {
-        font-size: 1.1rem;
-        min-height: 40px;
-        min-width: 40px;
+    .nav-toggle-btn,
+    .cart-icon,
+    .admin-login-btn {
+        min-width: 32px;
+        min-height: 32px;
+        padding: 3px 5px;
+    }
+    
+    .nav-actions {
+        gap: 0.15rem;
+    }
+    
+    .admin-text {
+        display: none;
     }
     
     .hero-title {
@@ -1883,20 +1992,12 @@ img {
 }
 
 @media (max-width: 360px) {
-    .logo a {
-        font-size: 0.9rem;
-    }
-    
-    .logo i {
-        font-size: 1.2rem;
-    }
-    
-    .hero-title {
-        font-size: 1.3rem;
-    }
-    
     .nav-actions {
-        gap: 0.5rem;
+        gap: 0.1rem;
+    }
+    
+    .language-switcher span {
+        display: none;
     }
     
     .cart-content,
@@ -1920,7 +2021,8 @@ img {
     .quantity-btn:hover,
     .social-links a:hover,
     .clear-cart-btn:hover,
-    .cart-item-remove:hover {
+    .cart-item-remove:hover,
+    .nav-toggle-btn:hover {
         transform: none;
     }
     
@@ -2003,363 +2105,4 @@ div,
 main,
 article {
     max-width: 100%;
-}
-/* Navigation Toggle Button Styles */
-.nav-toggle-btn {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: var(--text-color);
-    padding: 8px;
-    min-height: 44px;
-    min-width: 44px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.nav-toggle-btn:hover {
-    background: var(--light-background);
-    color: var(--primary-color);
-}
-
-.nav-toggle-btn.active {
-    color: var(--primary-color);
-    transform: rotate(180deg);
-}
-
-/* Desktop compressed menu */
-.nav-menu.compressed {
-    display: none !important;
-}
-
-/* Navigation Overlay for Mobile */
-.nav-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-}
-
-.nav-overlay.active {
-    display: block;
-}
-
-/* Show toggle button on mobile */
-@media (max-width: 768px) {
-    .nav-toggle-btn {
-        display: flex;
-    }
-    
-    /* Position toggle button between logo and hamburger */
-    .nav-wrapper {
-        position: relative;
-    }
-    
-    /* Adjust nav-actions spacing */
-    .nav-actions {
-        gap: 0.5rem;
-    }
-}
-
-/* Desktop: Show toggle button next to nav menu */
-@media (min-width: 769px) {
-    .nav-toggle-btn {
-        display: flex;
-        order: 2;
-        margin-left: 1rem;
-    }
-    
-    .nav-menu {
-        order: 1;
-    }
-    
-    .nav-actions {
-        order: 3;
-    }
-}
-/* Navigation Toggle Button - Updated Style */
-.nav-toggle-btn {
-    display: none;
-    background: var(--light-background);
-    border: 2px solid var(--border-color);
-    cursor: pointer;
-    font-size: 1rem;
-    color: var(--text-color);
-    padding: 8px 12px;
-    min-height: 40px;
-    min-width: 40px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.nav-toggle-btn:hover {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-    transform: scale(1.05);
-}
-
-.nav-toggle-btn.active {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-}
-
-.nav-toggle-btn .toggle-icon {
-    transition: transform 0.3s ease;
-    font-size: 1.1rem;
-}
-
-.nav-toggle-btn.active .toggle-icon {
-    transform: rotate(90deg);
-}
-
-/* Ensure login button is always visible */
-.admin-login-btn {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    align-items: center;
-    gap: 5px;
-    text-decoration: none;
-    color: var(--light-text);
-    font-size: 0.9rem;
-    transition: var(--transition);
-    min-height: 44px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    flex-shrink: 0;
-}
-
-.admin-login-btn:hover {
-    color: var(--primary-color);
-    background: var(--light-background);
-}
-
-.admin-login-btn i {
-    font-size: 1.2rem;
-}
-
-/* Show toggle button on mobile */
-@media (max-width: 768px) {
-    .nav-toggle-btn {
-        display: flex;
-    }
-    
-    /* Adjust nav-actions for mobile */
-    .nav-actions {
-        gap: 0.5rem;
-    }
-    
-    /* Ensure login button visible on mobile */
-    .admin-login-btn {
-        display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        padding: 5px 8px;
-        min-width: 40px;
-        justify-content: center;
-    }
-    
-    /* Hide text on very small screens but keep icon */
-    .admin-text {
-        display: inline;
-    }
-}
-
-@media (max-width: 480px) {
-    /* Hide admin text on very small screens */
-    .admin-text {
-        display: none;
-    }
-    
-    .admin-login-btn {
-        padding: 5px;
-        min-width: 40px;
-    }
-}
-
-/* Desktop: Position toggle button */
-@media (min-width: 769px) {
-    .nav-toggle-btn {
-        display: flex;
-        order: 2;
-        margin-left: 1rem;
-    }
-    
-    .nav-menu {
-        order: 1;
-    }
-    
-    .nav-actions {
-        order: 3;
-    }
-}
-/* Ensure all nav action items are visible */
-.nav-actions {
-    display: flex !important;
-    align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
-    min-width: 0;
-}
-
-/* Login Button - Always Visible */
-.admin-login-btn {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    align-items: center;
-    gap: 5px;
-    text-decoration: none;
-    color: var(--light-text);
-    font-size: 0.9rem;
-    transition: var(--transition);
-    min-height: 40px;
-    min-width: 40px;
-    padding: 5px 8px;
-    border-radius: 5px;
-    flex-shrink: 0;
-    white-space: nowrap;
-}
-
-/* Cart Icon - Always Visible */
-.cart-icon {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: relative;
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: var(--transition);
-    min-height: 40px;
-    min-width: 40px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-    flex-shrink: 0;
-}
-
-/* Toggle Button - Visible on all screens */
-.nav-toggle-btn {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    background: var(--light-background);
-    border: 2px solid var(--border-color);
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--text-color);
-    padding: 5px 8px;
-    min-height: 40px;
-    min-width: 40px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-/* Language Switcher - Always Visible */
-.language-switcher {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    align-items: center;
-    gap: 2px;
-    flex-shrink: 0;
-}
-
-/* Hamburger - Visible on mobile */
-.hamburger {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-    min-height: 40px;
-    min-width: 40px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-    flex-shrink: 0;
-}
-
-/* Mobile Specific */
-@media (max-width: 768px) {
-    .nav-actions {
-        gap: 0.25rem;
-    }
-    
-    .hamburger {
-        display: flex !important;
-    }
-    
-    /* Ensure all icons fit */
-    .admin-login-btn,
-    .cart-icon,
-    .nav-toggle-btn {
-        min-width: 36px;
-        min-height: 36px;
-        padding: 4px 6px;
-    }
-    
-    .language-switcher .lang-btn {
-        min-width: 36px;
-        min-height: 36px;
-        padding: 4px 6px;
-    }
-}
-
-/* Very Small Screens */
-@media (max-width: 480px) {
-    .admin-text {
-        display: none;
-    }
-    
-    .nav-actions {
-        gap: 0.15rem;
-    }
-    
-    .admin-login-btn,
-    .cart-icon,
-    .nav-toggle-btn {
-        min-width: 32px;
-        min-height: 32px;
-        padding: 3px 5px;
-    }
-    
-    .language-switcher .lang-btn {
-        min-width: 32px;
-        min-height: 32px;
-        padding: 3px 5px;
-        font-size: 0.8rem;
-    }
-}
-
-/* Very Very Small Screens */
-@media (max-width: 360px) {
-    .language-switcher {
-        gap: 0;
-    }
-    
-    .language-switcher span {
-        display: none; /* Hide the | separator */
-    }
-    
-    .nav-actions {
-        gap: 0.1rem;
-    }
 }
