@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Hulegeb Electronics | የአስተዳዳሪ ፓነል</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== ROOT VARIABLES ===== */
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #1e40af;
+            --primary-light: #60a5fa;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --dark-2: #1e293b;
+            --dark-3: #334155;
+            --gray: #64748b;
+            --gray-light: #94a3b8;
+            --light: #f1f5f9;
+            --lighter: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 70px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.15);
+            --shadow-xl: 0 12px 40px rgba(0,0,0,0.2);
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f4f8;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--light); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--gray-light); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--dark-2) 0%, var(--dark) 100%);
+            color: var(--white);
+            z-index: 1000;
+            transition: width var(--transition-smooth), transform var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 2px 0 20px rgba(0,0,0,0.3);
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 16px;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            white-space: nowrap;
+            min-height: 70px;
+        }
+
+        .sidebar-header i {
+            font-size: 26px;
+            color: var(--primary-light);
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            opacity: 1;
+            transition: opacity var(--transition-fast), width var(--transition-fast);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            justify-content: center;
+            padding: 18px 10px;
+        }
+        .sidebar.collapsed .sidebar-header h2 {
+            opacity: 0;
+            width: 0;
+        }
+
+        .admin-language-switcher {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            white-space: nowrap;
+            transition: all var(--transition-smooth);
+        }
+        .admin-language-switcher .lang-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: var(--gray-light);
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+            letter-spacing: 1px;
+            font-family: inherit;
+        }
+        .admin-language-switcher .lang-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .admin-language-switcher .lang-btn:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+        .admin-language-switcher span {
+            color: var(--gray-light);
+            font-size: 14px;
+            transition: opacity var(--transition-fast);
+        }
+        .sidebar.collapsed .admin-language-switcher span {
+            opacity: 0;
+            width: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 15px 10px;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-menu li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 16px;
+            margin-bottom: 4px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--gray-light);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            position: relative;
+            user-select: none;
+        }
+        .sidebar-menu li i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .sidebar-menu li span {
+            transition: opacity var(--transition-fast), width var(--transition-fast);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .sidebar-menu li:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        .sidebar-menu li.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59,130,246,0.4);
+        }
+        .sidebar-menu li.active::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 30px;
+            background: white;
+            border-radius: 0 4px 4px 0;
+        }
+        .sidebar.collapsed .sidebar-menu li {
+            justify-content: center;
+            padding: 13px 10px;
+        }
+        .sidebar.collapsed .sidebar-menu li span {
+            opacity: 0;
+            width: 0;
+        }
+        .sidebar.collapsed .sidebar-menu li:hover {
+            transform: translateX(0);
+        }
+
+        .sidebar-footer {
+            padding: 15px 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            color: var(--gray-light);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+        .sidebar-link i {
+            font-size: 16px;
+            width: 22px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .sidebar-link.logout-btn {
+            color: #f87171;
+        }
+        .sidebar-link.logout-btn:hover {
+            background: rgba(239,68,68,0.15);
+            color: #ef4444;
+        }
+        .sidebar.collapsed .sidebar-link {
+            justify-content: center;
+            padding: 11px 10px;
+        }
+        .sidebar.collapsed .sidebar-link span {
+            opacity: 0;
+            width: 0;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left var(--transition-smooth);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 30px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            box-shadow: var(--shadow-sm);
+            min-height: 70px;
+        }
+        .menu-toggle {
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--dark);
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+        }
+        .menu-toggle:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: rotate(90deg);
+        }
+        .top-bar h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--dark);
+            flex: 1;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all var(--transition-fast);
+        }
+        .user-info:hover {
+            background: var(--light);
+        }
+        .user-info i {
+            font-size: 28px;
+            color: var(--primary);
+        }
+
+        /* ===== PAGES ===== */
+        .page {
+            display: none;
+            padding: 30px;
+            animation: fadeInUp 0.4s ease;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        /* stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-smooth);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .stat-card i { font-size: 30px; margin-bottom: 12px; color: var(--primary); }
+        .stat-card:nth-child(2) i { color: var(--success); }
+        .stat-card:nth-child(3) i { color: var(--danger); }
+        .stat-card:nth-child(4) i { color: var(--warning); }
+        .stat-card h3 { font-size: 28px; font-weight: 700; color: var(--dark); }
+        .stat-card p { font-size: 13px; color: var(--gray); font-weight: 500; }
+
+        .quick-actions {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+        .quick-actions h3 { font-size: 18px; font-weight: 600; margin-bottom: 15px; }
+        .quick-action-buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+        .quick-action-buttons button {
+            display: flex; align-items: center; gap: 8px;
+            padding: 12px 20px; border-radius: 10px;
+            border: 2px solid var(--border); background: var(--lighter);
+            cursor: pointer; font-size: 13px; font-weight: 500;
+            color: var(--dark); transition: all var(--transition-fast); font-family: inherit;
+        }
+        .quick-action-buttons button:hover {
+            background: var(--primary); color: white; border-color: var(--primary);
+            transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59,130,246,0.3);
+        }
+
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .page-header h2 { margin-bottom: 0; }
+        .btn-add {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 22px; background: var(--primary); color: white;
+            border: none; border-radius: 10px; cursor: pointer;
+            font-size: 14px; font-weight: 600; font-family: inherit;
+            transition: all var(--transition-fast); box-shadow: 0 3px 10px rgba(59,130,246,0.3);
+        }
+        .btn-add:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        .search-filter { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-filter input, .search-filter select {
+            padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px;
+            font-size: 14px; font-family: inherit; background: white; color: var(--dark);
+            transition: all var(--transition-fast); outline: none; min-width: 150px;
+        }
+        .search-filter input { flex: 1; min-width: 200px; }
+        .search-filter input:focus, .search-filter select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(59,130,246,0.15); }
+
+        .table-container { background: white; border-radius: 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); overflow-x: auto; }
+        .admin-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .admin-table thead { background: var(--dark-2); color: white; }
+        .admin-table th { padding: 14px 18px; text-align: left; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; }
+        .admin-table td { padding: 14px 18px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--dark-3); vertical-align: middle; }
+        .admin-table tbody tr { transition: all var(--transition-fast); }
+        .admin-table tbody tr:hover { background: var(--lighter); }
+        .admin-table .product-thumb { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: var(--light); }
+
+        /* status badges */
+        .status-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-badge.status-active, .status-badge.completed, .status-badge.delivered { background: rgba(16,185,129,0.15); color: var(--success); }
+        .status-badge.status-inactive, .status-badge.rejected { background: rgba(239,68,68,0.15); color: var(--danger); }
+        .status-badge.pending { background: rgba(245,158,11,0.15); color: var(--warning); }
+        .status-badge.processing { background: rgba(59,130,246,0.15); color: var(--primary); }
+
+        /* action buttons */
+        .action-btns { display: flex; gap: 8px; }
+        .action-btn {
+            width: 36px; height: 36px; border-radius: 8px; border: none; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center; font-size: 14px;
+            transition: all var(--transition-fast); margin: 0 2px;
+        }
+        .btn-edit { background: rgba(59,130,246,0.1); color: var(--primary); }
+        .btn-edit:hover { background: var(--primary); color: white; }
+        .btn-delete { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .btn-delete:hover { background: var(--danger); color: white; }
+        .btn-toggle { background: rgba(139,92,246,0.1); color: var(--secondary); }
+        .btn-toggle:hover { background: var(--secondary); color: white; }
+        .btn-status { background: rgba(6,182,212,0.1); color: var(--accent); }
+        .btn-status:hover { background: var(--accent); color: white; }
+
+        /* status dropdown for orders */
+        .status-dropdown {
+            padding: 8px 12px; border-radius: 20px; border: 2px solid var(--border);
+            font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
+            transition: all var(--transition-fast); outline: none; background: white;
+        }
+        .status-dropdown.status-pending { border-color: var(--warning); color: var(--warning); background: rgba(245,158,11,0.1); }
+        .status-dropdown.status-processing { border-color: var(--primary); color: var(--primary); background: rgba(59,130,246,0.1); }
+        .status-dropdown.status-delivered, .status-dropdown.status-completed { border-color: var(--success); color: var(--success); background: rgba(16,185,129,0.1); }
+        .status-dropdown.status-rejected { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,0.1); }
+
+        .settings-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        .settings-card { background: white; border-radius: 16px; padding: 25px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
+        .settings-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .settings-card h3 i { color: var(--primary); }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--dark-3); }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px;
+            font-size: 14px; font-family: inherit; background: var(--lighter); color: var(--dark);
+            transition: all var(--transition-fast); outline: none;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        .btn-save, .btn-cancel {
+            display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px;
+            border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit;
+            transition: all var(--transition-fast);
+        }
+        .btn-save { background: var(--primary); color: white; border: none; box-shadow: 0 3px 10px rgba(59,130,246,0.3); }
+        .btn-save:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-cancel { background: var(--light); color: var(--dark); border: 2px solid var(--border); }
+        .btn-cancel:hover { background: var(--border); }
+
+        .image-upload-container { display: flex; flex-direction: column; gap: 12px; }
+        .image-preview {
+            width: 100%; min-height: 150px; border: 2px dashed var(--border); border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+            color: var(--gray-light); background: var(--lighter); cursor: pointer; transition: all var(--transition-fast);
+            position: relative; overflow: hidden;
+        }
+        .image-preview:hover { border-color: var(--primary); background: rgba(59,130,246,0.05); }
+        .image-preview i { font-size: 40px; color: var(--gray-light); }
+        .image-preview img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+        .image-upload-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-upload, .btn-remove-image {
+            display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+            border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; font-family: inherit; border: none;
+        }
+        .btn-upload { background: var(--dark-2); color: white; }
+        .btn-upload:hover { background: var(--dark-3); }
+        .btn-remove-image { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .btn-remove-image:hover { background: var(--danger); color: white; }
+
+        /* modal */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 2000;
+            align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.3s ease;
+        }
+        .modal.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content {
+            background: white; border-radius: 20px; padding: 30px; max-width: 600px; width: 100%;
+            max-height: 90vh; overflow-y: auto; position: relative;
+            animation: slideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: var(--shadow-xl);
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .modal-content h2 { font-size: 20px; font-weight: 600; margin-bottom: 25px; color: var(--dark); padding-right: 30px; }
+        .close-modal {
+            position: absolute; top: 15px; right: 15px; width: 36px; height: 36px; border-radius: 50%;
+            background: var(--light); border: none; font-size: 24px; cursor: pointer; color: var(--gray);
+            display: flex; align-items: center; justify-content: center; transition: all var(--transition-fast);
+        }
+        .close-modal:hover { background: var(--danger); color: white; transform: rotate(90deg); }
+        .modal-actions { display: flex; gap: 12px; margin-top: 25px; flex-wrap: wrap; }
+
+        .toast {
+            position: fixed; bottom: 30px; right: 30px; padding: 16px 24px; border-radius: 12px;
+            color: white; font-weight: 500; font-size: 14px; z-index: 3000; animation: toastIn 0.4s ease;
+            box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; max-width: 350px;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .toast.show { opacity: 1; }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(2px);
+        }
+        .sidebar-overlay.active { display: block; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .settings-container { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width) !important;
+                box-shadow: var(--shadow-xl);
+            }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .sidebar.collapsed { width: var(--sidebar-width) !important; }
+            .sidebar.collapsed .sidebar-header h2,
+            .sidebar.collapsed .sidebar-menu li span,
+            .sidebar.collapsed .sidebar-footer span,
+            .sidebar.collapsed .admin-language-switcher span {
+                opacity: 1; width: auto; overflow: visible; display: inline;
+            }
+            .sidebar.collapsed .sidebar-header { justify-content: flex-start; padding: 18px 16px; }
+            .sidebar.collapsed .sidebar-menu li { justify-content: flex-start; padding: 13px 16px; }
+            .sidebar.collapsed .sidebar-link { justify-content: flex-start; padding: 11px 16px; }
+            .main-content { margin-left: 0 !important; }
+            .sidebar-overlay.active { display: block; }
+            .top-bar { padding: 12px 16px; gap: 12px; }
+            .top-bar h1 { font-size: 18px; }
+            .page { padding: 16px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .quick-action-buttons { flex-direction: column; }
+            .page-header { flex-direction: column; align-items: flex-start; }
+            .btn-add { width: 100%; justify-content: center; }
+            .search-filter { flex-direction: column; }
+            .search-filter input, .search-filter select { width: 100%; }
+            .modal-content { padding: 20px; margin: 10px; }
+            .modal-actions { flex-direction: column; }
+            .modal-actions button { width: 100%; justify-content: center; }
+            .toast { bottom: 15px; right: 15px; left: 15px; max-width: none; justify-content: center; }
+            .user-info span { display: none; }
+        }
+        @media (max-width: 480px) {
+            .top-bar { padding: 10px 12px; }
+            .top-bar h1 { font-size: 16px; }
+            .stat-card h3 { font-size: 20px; }
+            .admin-table th, .admin-table td { padding: 10px 12px; font-size: 12px; }
+            .action-btn { width: 32px; height: 32px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-microchip"></i>
+            <h2 data-i18n="adminPanel">Admin Panel</h2>
+        </div>
+        <div class="admin-language-switcher">
+            <button class="lang-btn active" data-lang="en" onclick="setAdminLanguage('en')">EN</button>
+            <span>|</span>
+            <button class="lang-btn" data-lang="am" onclick="setAdminLanguage('am')">አማ</button>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="active" data-page="dashboard" onclick="switchPage('dashboard')"><i class="fas fa-dashboard"></i> <span data-i18n="dashboard">Dashboard</span></li>
+            <li data-page="products" onclick="switchPage('products')"><i class="fas fa-box"></i> <span data-i18n="products">Products</span></li>
+            <li data-page="categories" onclick="switchPage('categories')"><i class="fas fa-tags"></i> <span data-i18n="categories">Categories</span></li>
+            <li data-page="orders" onclick="switchPage('orders')"><i class="fas fa-shopping-cart"></i> <span data-i18n="orders">Orders</span></li>
+            <li data-page="customers" onclick="switchPage('customers')"><i class="fas fa-users"></i> <span data-i18n="customers">Customers</span></li>
+            <li data-page="settings" onclick="switchPage('settings')"><i class="fas fa-cog"></i> <span data-i18n="settings">Settings</span></li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="index.html" class="sidebar-link"><i class="fas fa-home"></i> <span data-i18n="backToWebsite">Back to Website</span></a>
+            <button class="sidebar-link logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span></button>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebarMobile()"></div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="top-bar">
+            <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            <h1 id="page-title" data-i18n="dashboard">Dashboard</h1>
+            <div class="user-info"><span id="current-user">Admin</span><i class="fas fa-user-circle"></i></div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="page active" id="dashboard-page" style="display: block;">
+            <div class="stats-grid">
+                <div class="stat-card"><i class="fas fa-box"></i><h3 id="total-products">0</h3><p data-i18n="totalProducts">Total Products</p></div>
+                <div class="stat-card"><i class="fas fa-check-circle"></i><h3 id="active-products">0</h3><p data-i18n="activeProducts">Active Products</p></div>
+                <div class="stat-card"><i class="fas fa-times-circle"></i><h3 id="inactive-products">0</h3><p data-i18n="inactiveProducts">Inactive Products</p></div>
+                <div class="stat-card"><i class="fas fa-shopping-cart"></i><h3 id="total-orders">0</h3><p data-i18n="orders">Orders</p></div>
+            </div>
+            <div class="quick-actions">
+                <h3 data-i18n="quickActions">Quick Actions</h3>
+                <div class="quick-action-buttons">
+                    <button onclick="switchPage('products')"><i class="fas fa-list"></i> <span data-i18n="viewProducts">View Products</span></button>
+                    <button onclick="showAddProductModal()"><i class="fas fa-plus"></i> <span data-i18n="addProduct">Add Product</span></button>
+                    <button onclick="switchPage('categories')"><i class="fas fa-tags"></i> <span data-i18n="manageCategories">Manage Categories</span></button>
+                    <button onclick="switchPage('orders')"><i class="fas fa-shopping-cart"></i> <span data-i18n="viewOrders">View Orders</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products -->
+        <div class="page" id="products-page" style="display: none;">
+            <div class="page-header">
+                <h2 data-i18n="manageProducts">Manage Products</h2>
+                <button class="btn-add" onclick="showAddProductModal()"><i class="fas fa-plus"></i> <span data-i18n="addProduct">Add Product</span></button>
+            </div>
+            <div class="search-filter">
+                <input type="text" id="product-search" placeholder="Search products..." data-i18n-placeholder="searchProducts" onkeyup="filterProducts()">
+                <select id="category-filter" onchange="filterProducts()"><option value="all" data-i18n="allCategories">All Categories</option></select>
+                <select id="status-filter" onchange="filterProducts()">
+                    <option value="all" data-i18n="allStatus">All Status</option>
+                    <option value="active" data-i18n="active">Active</option>
+                    <option value="inactive" data-i18n="inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead><tr><th>ID</th><th data-i18n="image">Image</th><th data-i18n="name">Name</th><th data-i18n="category">Category</th><th data-i18n="price">Price</th><th data-i18n="stock">Stock</th><th data-i18n="status">Status</th><th data-i18n="actions">Actions</th></tr></thead>
+                    <tbody id="products-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="page" id="categories-page" style="display: none;">
+            <div class="page-header">
+                <h2 data-i18n="manageCategories">Manage Categories</h2>
+                <button class="btn-add" onclick="showAddCategoryModal()"><i class="fas fa-plus"></i> <span data-i18n="addCategory">Add Category</span></button>
+            </div>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead><tr><th>ID</th><th data-i18n="icon">Icon</th><th data-i18n="nameEn">Name (English)</th><th data-i18n="nameAm">Name (Amharic)</th><th data-i18n="productsCount">Products</th><th data-i18n="status">Status</th><th data-i18n="actions">Actions</th></tr></thead>
+                    <tbody id="categories-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="page" id="orders-page" style="display: none;">
+            <h2 data-i18n="orders">Orders</h2>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead><tr><th data-i18n="orderId">Order ID</th><th data-i18n="customer">Customer</th><th data-i18n="phone">Phone</th><th data-i18n="items">Items</th><th data-i18n="total">Total</th><th data-i18n="date">Date</th><th data-i18n="status">Status</th><th data-i18n="actions">Actions</th></tr></thead>
+                    <tbody id="orders-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Customers -->
+        <div class="page" id="customers-page" style="display: none;">
+            <h2 data-i18n="customers">Customers</h2>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead><tr><th>ID</th><th data-i18n="name">Name</th><th data-i18n="email">Email</th><th data-i18n="phone">Phone</th><th data-i18n="orders">Orders</th></tr></thead>
+                    <tbody id="customers-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="page" id="settings-page" style="display: none;">
+            <h2 data-i18n="settings">Settings</h2>
+            <div class="settings-container">
+                <div class="settings-card">
+                    <h3><i class="fas fa-user"></i> <span data-i18n="profileInfo">Profile Information</span></h3>
+                    <form id="profile-form">
+                        <div class="form-group"><label data-i18n="fullName">Full Name</label><input type="text" id="profile-name" required></div>
+                        <div class="form-group"><label data-i18n="email">Email</label><input type="email" id="profile-email" required></div>
+                        <div class="form-group"><label data-i18n="phone">Phone</label><input type="tel" id="profile-phone"></div>
+                        <button type="submit" class="btn-save"><i class="fas fa-save"></i> <span data-i18n="updateProfile">Update Profile</span></button>
+                    </form>
+                </div>
+                <div class="settings-card">
+                    <h3><i class="fas fa-lock"></i> <span data-i18n="changePassword">Change Password</span></h3>
+                    <form id="password-form">
+                        <div class="form-group"><label data-i18n="currentPassword">Current Password *</label><input type="password" id="current-password" required></div>
+                        <div class="form-group"><label data-i18n="newPassword">New Password *</label><input type="password" id="new-password" required minlength="6"></div>
+                        <div class="form-group"><label data-i18n="confirmPassword">Confirm New Password *</label><input type="password" id="confirm-password" required minlength="6"></div>
+                        <button type="submit" class="btn-save"><i class="fas fa-key"></i> <span data-i18n="changePassword">Change Password</span></button>
+                    </form>
+                </div>
+                <div class="settings-card">
+                    <h3><i class="fas fa-store"></i> <span data-i18n="storeSettings">Store Settings</span></h3>
+                    <form id="store-settings-form">
+                        <div class="form-group"><label data-i18n="storeName">Store Name</label><input type="text" id="store-name" value="Hulegeb Electronics"></div>
+                        <div class="form-group"><label data-i18n="email">Email</label><input type="email" id="store-email" value="hulgebmereja2017@gmail.com"></div>
+                        <div class="form-group"><label data-i18n="phone">Phone</label><input type="text" id="store-phone" value="+251 911 234 567"></div>
+                        <div class="form-group"><label data-i18n="location">Location</label><input type="text" id="store-location" value="Debre Berhan, Ethiopia"></div>
+                        <button type="submit" class="btn-save"><i class="fas fa-save"></i> <span data-i18n="saveSettings">Save Settings</span></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product Modal -->
+<div class="modal" id="product-modal">
+    <div class="modal-content">
+        <h2 id="modal-title" data-i18n="addProduct">Add Product</h2>
+        <form id="product-form">
+            <div class="form-row">
+                <div class="form-group"><label data-i18n="productNameEn">Product Name (English) *</label><input type="text" id="product-name-en" required></div>
+                <div class="form-group"><label data-i18n="productNameAm">Product Name (Amharic) *</label><input type="text" id="product-name-am" required></div>
+            </div>
+            <div class="form-group">
+                <label data-i18n="productImage">Product Image</label>
+                <div class="image-upload-container">
+                    <div class="image-preview" id="image-preview"><i class="fas fa-image"></i><span data-i18n="chooseImage">Click "Choose from Gallery" to upload image</span></div>
+                    <input type="file" id="product-image-input" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                    <div class="image-upload-buttons">
+                        <button type="button" class="btn-upload" onclick="document.getElementById('product-image-input').click()"><i class="fas fa-upload"></i> <span data-i18n="chooseGallery">Choose from Gallery</span></button>
+                        <button type="button" class="btn-remove-image" id="remove-image-btn" style="display: none;" onclick="removeImage()"><i class="fas fa-trash"></i> <span data-i18n="removeImage">Remove Image</span></button>
+                    </div>
+                </div>
+                <input type="hidden" id="product-image-data" value="">
+            </div>
+            <div class="form-group"><label data-i18n="descriptionEn">Description (English)</label><textarea id="product-desc-en" rows="2"></textarea></div>
+            <div class="form-group"><label data-i18n="descriptionAm">Description (Amharic)</label><textarea id="product-desc-am" rows="2"></textarea></div>
+            <div class="form-row">
+                <div class="form-group"><label data-i18n="price">Price (ETB) *</label><input type="number" id="product-price" required></div>
+                <div class="form-group"><label data-i18n="oldPrice">Old Price (ETB)</label><input type="number" id="product-old-price"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label data-i18n="category">Category *</label><select id="product-category" required><option value="">Select Category</option></select></div>
+                <div class="form-group"><label data-i18n="stock">Stock *</label><input type="number" id="product-stock" required></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label data-i18n="status">Status</label><select id="product-status"><option value="active" data-i18n="active">Active</option><option value="inactive" data-i18n="inactive">Inactive</option></select></div>
+                <div class="form-group"><label data-i18n="rating">Rating</label><input type="number" id="product-rating" min="0" max="5" step="0.1" value="4.5"></div>
+            </div>
+            <div class="form-group"><label data-i18n="badge">Badge</label><select id="product-badge"><option value="">None</option><option value="New">New</option><option value="Hot">Hot</option><option value="Sale">Sale</option></select></div>
+            <input type="hidden" id="product-id">
+            <div class="modal-actions">
+                <button type="submit" class="btn-save"><i class="fas fa-save"></i> <span data-i18n="saveProduct">Save Product</span></button>
+                <button type="button" class="btn-cancel" onclick="closeModal('product-modal')"><i class="fas fa-times"></i> <span data-i18n="cancel">Cancel</span></button>
+            </div>
+        </form>
+        <button class="close-modal" onclick="closeModal('product-modal')">&times;</button>
+    </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal" id="category-modal">
+    <div class="modal-content">
+        <h2 id="category-modal-title" data-i18n="addCategory">Add Category</h2>
+        <form id="category-form">
+            <div class="form-row">
+                <div class="form-group"><label data-i18n="categoryNameEn">Category Name (English) *</label><input type="text" id="category-name-en" required></div>
+                <div class="form-group"><label data-i18n="categoryNameAm">Category Name (Amharic) *</label><input type="text" id="category-name-am" required></div>
+            </div>
+            <div class="form-group"><label data-i18n="icon">Icon</label><select id="category-icon"><option value="fa-mobile-alt">📱 Phone</option><option value="fa-laptop">💻 Laptop</option><option value="fa-tablet-alt">📱 Tablet</option><option value="fa-headphones">🎧 Audio</option><option value="fa-clock">⌚ Watch</option><option value="fa-plug">🔌 Accessories</option><option value="fa-camera">📷 Camera</option><option value="fa-gamepad">🎮 Gaming</option><option value="fa-tv">📺 TV</option><option value="fa-home">🏠 Smart Home</option></select></div>
+            <div class="form-group"><label data-i18n="description">Description</label><textarea id="category-desc" rows="2"></textarea></div>
+            <div class="form-row">
+                <div class="form-group"><label data-i18n="status">Status</label><select id="category-status"><option value="active" data-i18n="active">Active</option><option value="inactive" data-i18n="inactive">Inactive</option></select></div>
+                <div class="form-group"><label data-i18n="sortOrder">Sort Order</label><input type="number" id="category-order" value="1"></div>
+            </div>
+            <input type="hidden" id="category-id">
+            <div class="modal-actions">
+                <button type="submit" class="btn-save"><i class="fas fa-save"></i> <span data-i18n="saveCategory">Save Category</span></button>
+                <button type="button" class="btn-cancel" onclick="closeModal('category-modal')"><i class="fas fa-times"></i> <span data-i18n="cancel">Cancel</span></button>
+            </div>
+        </form>
+        <button class="close-modal" onclick="closeModal('category-modal')">&times;</button>
+    </div>
+</div>
+
+<!-- Order Status Modal -->
+<div class="modal" id="order-status-modal">
+    <div class="modal-content">
+        <h2>Update Order Status</h2>
+        <form id="order-status-form">
+            <div class="form-group"><label data-i18n="orderId">Order ID</label><input type="text" id="status-order-id" readonly></div>
+            <div class="form-group"><label data-i18n="customer">Customer</label><input type="text" id="status-customer" readonly></div>
+            <div class="form-group"><label data-i18n="email">Email</label><input type="email" id="status-email" readonly></div>
+            <div class="form-group"><label data-i18n="status">Select Status *</label><select id="order-status-select" required><option value="pending">Pending</option><option value="processing">Processing</option><option value="delivered">Delivered</option><option value="completed">Completed</option><option value="rejected">Rejected</option></select></div>
+            <div class="form-group"><label>Note (Optional)</label><textarea id="order-status-note" rows="3"></textarea></div>
+            <input type="hidden" id="status-order-index">
+            <div class="modal-actions">
+                <button type="submit" class="btn-save"><i class="fas fa-save"></i> Update Status</button>
+                <button type="button" class="btn-cancel" onclick="closeModal('order-status-modal')"><i class="fas fa-times"></i> Cancel</button>
+            </div>
+        </form>
+        <button class="close-modal" onclick="closeModal('order-status-modal')">&times;</button>
+    </div>
+</div>
+
+<script>
+    // ==================== TRANSLATIONS ====================
+    const adminTranslations = {
+        en: {
+            adminPanel: 'Admin Panel', dashboard: 'Dashboard', products: 'Products', categories: 'Categories',
+            orders: 'Orders', customers: 'Customers', settings: 'Settings', backToWebsite: 'Back to Website',
+            logout: 'Logout', totalProducts: 'Total Products', activeProducts: 'Active Products',
+            inactiveProducts: 'Inactive Products', quickActions: 'Quick Actions', viewProducts: 'View Products',
+            addProduct: 'Add Product', manageCategories: 'Manage Categories', viewOrders: 'View Orders',
+            manageProducts: 'Manage Products', searchProducts: 'Search products...', allCategories: 'All Categories',
+            allStatus: 'All Status', active: 'Active', inactive: 'Inactive', image: 'Image', name: 'Name',
+            category: 'Category', price: 'Price', stock: 'Stock', status: 'Status', actions: 'Actions',
+            icon: 'Icon', nameEn: 'Name (English)', nameAm: 'Name (Amharic)', productsCount: 'Products',
+            orderId: 'Order ID', customer: 'Customer', phone: 'Phone', items: 'Items', total: 'Total',
+            date: 'Date', email: 'Email', profileInfo: 'Profile Information', fullName: 'Full Name',
+            updateProfile: 'Update Profile', changePassword: 'Change Password', currentPassword: 'Current Password',
+            newPassword: 'New Password', confirmPassword: 'Confirm New Password', storeSettings: 'Store Settings',
+            storeName: 'Store Name', location: 'Location', saveSettings: 'Save Store Settings',
+            productNameEn: 'Product Name (English)', productNameAm: 'Product Name (Amharic)',
+            productImage: 'Product Image', chooseImage: 'Click "Choose from Gallery" to upload image',
+            chooseGallery: 'Choose from Gallery', removeImage: 'Remove Image', descriptionEn: 'Description (English)',
+            descriptionAm: 'Description (Amharic)', oldPrice: 'Old Price', rating: 'Rating', badge: 'Badge',
+            saveProduct: 'Save Product', cancel: 'Cancel', categoryNameEn: 'Category Name (English)',
+            categoryNameAm: 'Category Name (Amharic)', description: 'Description', sortOrder: 'Sort Order',
+            saveCategory: 'Save Category', addCategory: 'Add Category'
+        },
+        am: {
+            adminPanel: 'የአስተዳዳሪ ፓነል', dashboard: 'ዳሽቦርድ', products: 'ምርቶች', categories: 'ምድቦች',
+            orders: 'ትዕዛዞች', customers: 'ደንበኞች', settings: 'ቅንብሮች', backToWebsite: 'ወደ ድህረ ገጽ ተመለስ',
+            logout: 'ውጣ', totalProducts: 'ጠቅላላ ምርቶች', activeProducts: 'ንቁ ምርቶች',
+            inactiveProducts: 'የቦዘኑ ምርቶች', quickActions: 'ፈጣን እርምጃዎች', viewProducts: 'ምርቶችን ይመልከቱ',
+            addProduct: 'ምርት ጨምር', manageCategories: 'ምድቦችን አስተዳድር', viewOrders: 'ትዕዛዞችን ይመልከቱ',
+            manageProducts: 'ምርቶችን አስተዳድር', searchProducts: 'ምርቶችን ይፈልጉ...', allCategories: 'ሁሉም ምድቦች',
+            allStatus: 'ሁሉም ሁኔታ', active: 'ንቁ', inactive: 'የቦዘነ', image: 'ምስል', name: 'ስም',
+            category: 'ምድብ', price: 'ዋጋ', stock: 'ክምችት', status: 'ሁኔታ', actions: 'እርምጃዎች',
+            icon: 'አዶ', nameEn: 'ስም (በእንግሊዝኛ)', nameAm: 'ስም (በአማርኛ)', productsCount: 'ምርቶች',
+            orderId: 'የትዕዛዝ ቁጥር', customer: 'ደንበኛ', phone: 'ስልክ', items: 'እቃዎች', total: 'ጠቅላላ',
+            date: 'ቀን', email: 'ኢሜይል', profileInfo: 'የመገለጫ መረጃ', fullName: 'ሙሉ ስም',
+            updateProfile: 'መገለጫ አዘምን', changePassword: 'የይለፍ ቃል ይቀይሩ', currentPassword: 'የአሁኑ የይለፍ ቃል',
+            newPassword: 'አዲስ የይለፍ ቃል', confirmPassword: 'አዲሱን የይለፍ ቃል ያረጋግጡ', storeSettings: 'የመደብር ቅንብሮች',
+            storeName: 'የመደብር ስም', location: 'አካባቢ', saveSettings: 'ቅንብሮችን አስቀምጥ',
+            productNameEn: 'የምርት ስም (በእንግሊዝኛ)', productNameAm: 'የምርት ስም (በአማርኛ)',
+            productImage: 'የምርት ምስል', chooseImage: 'ምስል ለመስቀል "ከጋለሪ ይምረጡ" ይጫኑ',
+            chooseGallery: 'ከጋለሪ ይምረጡ', removeImage: 'ምስል አስወግድ', descriptionEn: 'መግለጫ (በእንግሊዝኛ)',
+            descriptionAm: 'መግለጫ (በአማርኛ)', oldPrice: 'የቀድሞ ዋጋ', rating: 'ደረጃ', badge: 'ባጅ',
+            saveProduct: 'ምርት አስቀምጥ', cancel: 'ሰርዝ', categoryNameEn: 'የምድብ ስም (በእንግሊዝኛ)',
+            categoryNameAm: 'የምድብ ስም (በአማርኛ)', description: 'መግለጫ', sortOrder: 'የቅደም ተከተል',
+            saveCategory: 'ምድብ አስቀምጥ', addCategory: 'ምድብ ጨምር'
+        }
+    };
+
+    let currentAdminLanguage = localStorage.getItem('adminLanguage') || 'en';
+
+    function setAdminLanguage(lang) {
+        currentAdminLanguage = lang;
+        localStorage.setItem('adminLanguage', lang);
+        
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
+        
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.dataset.i18n;
+            if (adminTranslations[lang] && adminTranslations[lang][key]) {
+                element.textContent = adminTranslations[lang][key];
+            }
+        });
+        
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+            const key = element.dataset.i18nPlaceholder;
+            if (adminTranslations[lang] && adminTranslations[lang][key]) {
+                element.placeholder = adminTranslations[lang][key];
+            }
+        });
+        
+        document.documentElement.lang = lang === 'am' ? 'am' : 'en';
+    }
+
+    // ==================== ADMIN PANEL CORE ====================
+    function checkAuth(role) {
+        const user = JSON.parse(sessionStorage.getItem('currentUser'));
+        if (!user) return null;
+        if (role && user.role !== role) return null;
+        return user;
+    }
+
+    const currentUser = checkAuth('admin');
+    if (!currentUser) {
+        const defaultUser = { name: 'Admin', email: 'admin@hulegeb.com', username: 'admin', role: 'admin', password: 'admin123' };
+        sessionStorage.setItem('currentUser', JSON.stringify(defaultUser));
+    }
+
+    const sessionUser = JSON.parse(sessionStorage.getItem('currentUser')) || { name: 'Admin' };
+    document.getElementById('current-user').textContent = sessionUser.name;
+
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    let categories = JSON.parse(localStorage.getItem('categories')) || [];
+    let editingProductId = null;
+    let editingCategoryId = null;
+    let uploadedImageData = null;
+
+    // Initialize default categories
+    if (categories.length === 0) {
+        categories = [
+            { id: 1, name: 'Phones', name_am: 'ስልኮች', icon: 'fa-mobile-alt', status: 'active', order: 1, slug: 'phones' },
+            { id: 2, name: 'Laptops', name_am: 'ላፕቶፖች', icon: 'fa-laptop', status: 'active', order: 2, slug: 'laptops' },
+            { id: 3, name: 'Tablets', name_am: 'ታብሌቶች', icon: 'fa-tablet-alt', status: 'active', order: 3, slug: 'tablets' },
+            { id: 4, name: 'Audio', name_am: 'ኦዲዮ', icon: 'fa-headphones', status: 'active', order: 4, slug: 'audio' },
+            { id: 5, name: 'Watches', name_am: 'ሰዓቶች', icon: 'fa-clock', status: 'active', order: 5, slug: 'watches' },
+            { id: 6, name: 'Accessories', name_am: 'ተጨማሪ እቃዎች', icon: 'fa-plug', status: 'active', order: 6, slug: 'accessories' },
+            { id: 7, name: 'Cameras', name_am: 'ካሜራዎች', icon: 'fa-camera', status: 'active', order: 7, slug: 'cameras' },
+            { id: 8, name: 'Gaming', name_am: 'ጨዋታ', icon: 'fa-gamepad', status: 'active', order: 8, slug: 'gaming' }
+        ];
+        localStorage.setItem('categories', JSON.stringify(categories));
+    }
+
+    // Initialize default products
+    if (products.length === 0) {
+        products = [
+            { id: 1, name: 'iPhone 15 Pro Max', name_am: 'አይፎን 15 ፕሮ ማክስ', price: 185000, category: 'phones', image: 'https://placehold.co/400x300/2563eb/ffffff?text=iPhone', stock: 15, status: 'active' },
+            { id: 2, name: 'Samsung Galaxy S24', name_am: 'ሳምሰንግ ጋላክሲ S24', price: 165000, category: 'phones', image: 'https://placehold.co/400x300/7c3aed/ffffff?text=Samsung', stock: 20, status: 'active' },
+            { id: 3, name: 'MacBook Pro', name_am: 'ማክቡክ ፕሮ', price: 385000, category: 'laptops', image: 'https://placehold.co/400x300/059669/ffffff?text=MacBook', stock: 8, status: 'active' },
+            { id: 4, name: 'Sony Headphones', name_am: 'ሶኒ ሄድፎኖች', price: 45000, category: 'audio', image: 'https://placehold.co/400x300/dc2626/ffffff?text=Sony', stock: 30, status: 'active' },
+            { id: 5, name: 'PlayStation 5', name_am: 'PS5', price: 85000, category: 'gaming', image: 'https://placehold.co/400x300/be185d/ffffff?text=PS5', stock: 12, status: 'active' }
+        ];
+        localStorage.setItem('products', JSON.stringify(products));
+    }
+
+    function syncToWebsite() {
+        localStorage.setItem('products', JSON.stringify(products));
+        localStorage.setItem('categories', JSON.stringify(categories));
+        localStorage.setItem('orders', JSON.stringify(orders));
+        localStorage.setItem('productsUpdated', Date.now().toString());
+        localStorage.setItem('categoriesUpdated', Date.now().toString());
+        localStorage.setItem('ordersUpdated', Date.now().toString());
+    }
+
+    function handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) { showToast('⚠️ Please select an image file'); return; }
+        if (file.size > 5 * 1024 * 1024) { showToast('⚠️ Image too large. Max 5MB'); return; }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedImageData = e.target.result;
+            document.getElementById('product-image-data').value = uploadedImageData;
+            const preview = document.getElementById('image-preview');
+            preview.innerHTML = `<img src="${uploadedImageData}" style="width:100%;height:100%;object-fit:cover;">`;
+            document.getElementById('remove-image-btn').style.display = 'inline-block';
+            showToast('✅ Image selected');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+        uploadedImageData = null;
+        document.getElementById('product-image-data').value = '';
+        document.getElementById('product-image-input').value = '';
+        const preview = document.getElementById('image-preview');
+        preview.innerHTML = '<i class="fas fa-image"></i><span>Click "Choose from Gallery" to upload image</span>';
+        document.getElementById('remove-image-btn').style.display = 'none';
+        showToast('Image removed');
+    }
+
+    function switchPage(page) {
+        document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+        const activeItem = document.querySelector(`.sidebar-menu li[data-page="${page}"]`);
+        if (activeItem) activeItem.classList.add('active');
+        
+        document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+        const selectedPage = document.getElementById(`${page}-page`);
+        if (selectedPage) { selectedPage.classList.add('active'); selectedPage.style.display = 'block'; }
+        
+        const titles = { dashboard: 'dashboard', products: 'manageProducts', categories: 'manageCategories', orders: 'orders', customers: 'customers', settings: 'settings' };
+        document.getElementById('page-title').textContent = adminTranslations[currentAdminLanguage][titles[page]] || titles[page];
+        
+        if (page === 'dashboard') loadDashboard();
+        if (page === 'products') loadProducts();
+        if (page === 'categories') loadCategories();
+        if (page === 'orders') loadOrders();
+        if (page === 'customers') loadCustomers();
+        if (page === 'settings') loadSettings();
+        
+        if (window.innerWidth <= 768) closeSidebarMobile();
+    }
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        if (window.innerWidth <= 768) {
+            sidebar.classList.toggle('mobile-open');
+            document.getElementById('sidebar-overlay').classList.toggle('active', sidebar.classList.contains('mobile-open'));
+        } else {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded', sidebar.classList.contains('collapsed'));
+        }
+    }
+
+    function closeSidebarMobile() {
+        document.getElementById('sidebar').classList.remove('mobile-open');
+        document.getElementById('sidebar-overlay').classList.remove('active');
+    }
+
+    function loadDashboard() {
+        products = JSON.parse(localStorage.getItem('products')) || [];
+        orders = JSON.parse(localStorage.getItem('orders')) || [];
+        categories = JSON.parse(localStorage.getItem('categories')) || [];
+        
+        document.getElementById('total-products').textContent = products.length;
+        document.getElementById('active-products').textContent = products.filter(p => p.status !== 'inactive').length;
+        document.getElementById('inactive-products').textContent = products.filter(p => p.status === 'inactive').length;
+        document.getElementById('total-orders').textContent = orders.length;
+        updateCategoryFilter();
+    }
+
+    function loadProducts() {
+        const tbody = document.getElementById('products-table-body');
+        if (!tbody) return;
+        products = JSON.parse(localStorage.getItem('products')) || [];
+        tbody.innerHTML = '';
+        if (products.length === 0) { tbody.innerHTML = '<tr><td colspan="8">No products</td></tr>'; return; }
+        products.forEach((product, index) => {
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td>${product.id || index + 1}</td>
+                <td><img src="${product.image}" style="width:50px;height:50px;object-fit:cover;border-radius:5px;" onerror="this.src='https://placehold.co/50x50'"></td>
+                <td>${product.name}</td>
+                <td>${product.category}</td>
+                <td>ETB ${product.price?.toLocaleString()}</td>
+                <td>${product.stock}</td>
+                <td><span class="status-badge ${product.status === 'active' ? 'status-active' : 'status-inactive'}">${product.status || 'active'}</span></td>
+                <td>
+                    <button class="action-btn btn-edit" onclick="editProduct(${index})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn btn-toggle" onclick="toggleProductStatus(${index})"><i class="fas fa-power-off"></i></button>
+                    <button class="action-btn btn-delete" onclick="deleteProduct(${index})"><i class="fas fa-trash"></i></button>
+                </td>`;
+        });
+    }
+
+    function loadCategories() {
+        const tbody = document.getElementById('categories-table-body');
+        if (!tbody) return;
+        categories = JSON.parse(localStorage.getItem('categories')) || [];
+        tbody.innerHTML = '';
+        if (categories.length === 0) { tbody.innerHTML = '<tr><td colspan="7">No categories</td></tr>'; return; }
+        categories.sort((a, b) => (a.order || 1) - (b.order || 1));
+        categories.forEach((category, index) => {
+            const productCount = products.filter(p => p.category === category.slug).length;
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td>${category.id || index + 1}</td>
+                <td><i class="fas ${category.icon || 'fa-tag'}"></i></td>
+                <td>${category.name}</td>
+                <td>${category.name_am || 'N/A'}</td>
+                <td>${productCount} products</td>
+                <td><span class="status-badge ${category.status === 'active' ? 'status-active' : 'status-inactive'}">${category.status || 'active'}</span></td>
+                <td>
+                    <button class="action-btn btn-edit" onclick="editCategory(${index})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn btn-toggle" onclick="toggleCategoryStatus(${index})"><i class="fas fa-power-off"></i></button>
+                    <button class="action-btn btn-delete" onclick="deleteCategory(${index})"><i class="fas fa-trash"></i></button>
+                </td>`;
+        });
+        updateCategoryFilter();
+    }
+
+    function getStatusClass(status) {
+        switch(status) {
+            case 'pending': return 'status-pending';
+            case 'processing': return 'status-processing';
+            case 'delivered': return 'status-delivered';
+            case 'completed': return 'status-completed';
+            case 'rejected': return 'status-rejected';
+            default: return 'status-pending';
+        }
+    }
+
+    function getStatusText(status) {
+        const lang = localStorage.getItem('adminLanguage') || 'en';
+        if (lang === 'am') {
+            switch(status) {
+                case 'pending': return 'በመጠባበቅ ላይ';
+                case 'processing': return 'በሂደት ላይ';
+                case 'delivered': return 'ተላክቷል';
+                case 'completed': return 'ተጠናቋል';
+                case 'rejected': return 'ውድቅ ተደርጓል';
+                default: return 'በመጠባበቅ ላይ';
+            }
+        } else {
+            switch(status) {
+                case 'pending': return 'Pending';
+                case 'processing': return 'Processing';
+                case 'delivered': return 'Delivered';
+                case 'completed': return 'Completed';
+                case 'rejected': return 'Rejected';
+                default: return 'Pending';
+            }
+        }
+    }
+
+    function loadOrders() {
+        const tbody = document.getElementById('orders-table-body');
+        if (!tbody) return;
+        orders = JSON.parse(localStorage.getItem('orders')) || [];
+        tbody.innerHTML = '';
+        
+        if (orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No orders found</td></tr>';
+            return;
+        }
+        
+        const sortedOrders = [...orders].reverse();
+        
+        sortedOrders.forEach((order, index) => {
+            const actualIndex = orders.indexOf(order);
+            const row = tbody.insertRow();
+            const currentStatus = order.status || 'pending';
+            
+            row.innerHTML = `
+                <td>${order.orderId || '#' + (actualIndex + 1)}</td>
+                <td>${order.name}</td>
+                <td>${order.phone || 'N/A'}</td>
+                <td>${order.items?.length || 0} items</td>
+                <td>ETB ${(order.finalTotal || order.total || 0).toLocaleString()}</td>
+                <td>${new Date(order.date).toLocaleDateString()}</td>
+                <td>
+                    <select class="status-dropdown ${getStatusClass(currentStatus)}" 
+                            onchange="updateOrderStatusInstant(${actualIndex}, this.value, this)">
+                        <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                        <option value="processing" ${currentStatus === 'processing' ? 'selected' : ''}>Processing</option>
+                        <option value="delivered" ${currentStatus === 'delivered' ? 'selected' : ''}>Delivered</option>
+                        <option value="completed" ${currentStatus === 'completed' ? 'selected' : ''}>Completed</option>
+                        <option value="rejected" ${currentStatus === 'rejected' ? 'selected' : ''}>Rejected</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="action-btn btn-edit" onclick="viewOrder(${actualIndex})" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>`;
+        });
+    }
+
+    function updateOrderStatusInstant(index, newStatus, selectElement) {
+        if (!orders[index]) return;
+        
+        const order = orders[index];
+        const oldStatus = order.status;
+        
+        order.status = newStatus;
+        order.statusUpdatedAt = new Date().toISOString();
+        
+        localStorage.setItem('orders', JSON.stringify(orders));
+        localStorage.setItem('ordersUpdated', Date.now().toString());
+        
+        if (selectElement) {
+            selectElement.className = `status-dropdown ${getStatusClass(newStatus)}`;
+        }
+        
+        showToast(`✅ Status: ${getStatusText(newStatus)}`);
+        
+        sendOrderStatusNotification(order, newStatus, '');
+        
+        loadDashboard();
+        console.log(`✅ Order ${order.orderId}: ${oldStatus} → ${newStatus}`);
+    }
+
+    function sendOrderStatusNotification(order, status, note) {
+        console.log(`📧 Sending email to ${order.email} - Status: ${status}`);
+        showToast('✅ Status updated');
+    }
+
+    function loadCustomers() {
+        const tbody = document.getElementById('customers-table-body');
+        if (!tbody) return;
+        orders = JSON.parse(localStorage.getItem('orders')) || [];
+        tbody.innerHTML = '';
+        if (orders.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No customers</td></tr>'; return; }
+        const customers = {};
+        orders.forEach(order => {
+            if (!customers[order.email]) customers[order.email] = { name: order.name, email: order.email, phone: order.phone, orders: 1 };
+            else customers[order.email].orders++;
+        });
+        Object.values(customers).forEach((customer, index) => {
+            const row = tbody.insertRow();
+            row.innerHTML = `<td>${index + 1}</td><td>${customer.name}</td><td>${customer.email}</td><td>${customer.phone || 'N/A'}</td><td>${customer.orders}</td>`;
+        });
+    }
+
+    function loadSettings() {
+        const userData = JSON.parse(sessionStorage.getItem('currentUser')) || {};
+        document.getElementById('profile-name').value = userData.name || '';
+        document.getElementById('profile-email').value = userData.email || '';
+        document.getElementById('profile-phone').value = userData.phone || '';
+        
+        const storeSettings = JSON.parse(localStorage.getItem('storeSettings')) || {};
+        document.getElementById('store-name').value = storeSettings.storeName || 'Hulegeb Electronics';
+        document.getElementById('store-email').value = storeSettings.email || 'hulgebmereja2017@gmail.com';
+        document.getElementById('store-phone').value = storeSettings.phone || '+251 911 234 567';
+        document.getElementById('store-location').value = storeSettings.location || 'Debre Berhan, Ethiopia';
+    }
+
+    function updateCategoryFilter() {
+        const filterSelect = document.getElementById('category-filter');
+        if (filterSelect) {
+            filterSelect.innerHTML = '<option value="all">All Categories</option>';
+            categories.filter(c => c.status !== 'inactive').forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.slug;
+                option.textContent = category.name;
+                filterSelect.appendChild(option);
+            });
+        }
+    }
+
+    function loadCategoriesIntoProductForm() {
+        const categorySelect = document.getElementById('product-category');
+        if (!categorySelect) return;
+        categories = JSON.parse(localStorage.getItem('categories')) || [];
+        categorySelect.innerHTML = '<option value="">Select Category</option>';
+        categories.filter(c => c.status !== 'inactive').forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.slug;
+            option.textContent = category.name;
+            categorySelect.appendChild(option);
+        });
+    }
+
+    function showAddCategoryModal() {
+        editingCategoryId = null;
+        document.getElementById('category-modal-title').textContent = 'Add Category';
+        document.getElementById('category-form').reset();
+        document.getElementById('category-order').value = categories.length + 1;
+        document.getElementById('category-modal').classList.add('active');
+    }
+
+    function editCategory(index) {
+        const category = categories[index];
+        editingCategoryId = index;
+        document.getElementById('category-modal-title').textContent = 'Edit Category';
+        document.getElementById('category-name-en').value = category.name || '';
+        document.getElementById('category-name-am').value = category.name_am || '';
+        document.getElementById('category-icon').value = category.icon || 'fa-tag';
+        document.getElementById('category-desc').value = category.description || '';
+        document.getElementById('category-status').value = category.status || 'active';
+        document.getElementById('category-order').value = category.order || 1;
+        document.getElementById('category-modal').classList.add('active');
+    }
+
+    function toggleCategoryStatus(index) {
+        categories[index].status = categories[index].status === 'inactive' ? 'active' : 'inactive';
+        localStorage.setItem('categories', JSON.stringify(categories));
+        syncToWebsite();
+        loadCategories();
+        showToast(`Category ${categories[index].status === 'active' ? 'activated' : 'deactivated'}`);
+    }
+
+    function deleteCategory(index) {
+        const category = categories[index];
+        const productCount = products.filter(p => p.category === category.slug).length;
+        if (productCount > 0) { showToast(`⚠️ Cannot delete. ${productCount} products use this category.`); return; }
+        if (confirm(`Delete category "${category.name}"?`)) {
+            categories.splice(index, 1);
+            localStorage.setItem('categories', JSON.stringify(categories));
+            syncToWebsite();
+            loadCategories();
+            showToast('✅ Category deleted');
+        }
+    }
+
+    document.getElementById('category-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const nameEn = document.getElementById('category-name-en').value;
+        const slug = nameEn.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const categoryData = {
+            name: nameEn,
+            name_am: document.getElementById('category-name-am').value,
+            icon: document.getElementById('category-icon').value,
+            description: document.getElementById('category-desc').value,
+            status: document.getElementById('category-status').value,
+            order: parseInt(document.getElementById('category-order').value) || 1,
+            slug: slug
+        };
+        
+        if (editingCategoryId !== null) {
+            categoryData.id = categories[editingCategoryId].id;
+            categories[editingCategoryId] = {...categories[editingCategoryId], ...categoryData};
+            showToast('✅ Category updated');
+        } else {
+            categoryData.id = Date.now();
+            categories.push(categoryData);
+            showToast('✅ Category added');
+        }
+        
+        localStorage.setItem('categories', JSON.stringify(categories));
+        syncToWebsite();
+        closeModal('category-modal');
+        this.reset();
+        loadCategories();
+    });
+
+    function showAddProductModal() {
+        editingProductId = null;
+        uploadedImageData = null;
+        document.getElementById('modal-title').textContent = 'Add Product';
+        document.getElementById('product-form').reset();
+        loadCategoriesIntoProductForm();
+        document.getElementById('product-image-data').value = '';
+        document.getElementById('product-image-input').value = '';
+        const preview = document.getElementById('image-preview');
+        preview.innerHTML = '<i class="fas fa-image"></i><span>Click "Choose from Gallery" to upload image</span>';
+        document.getElementById('remove-image-btn').style.display = 'none';
+        document.getElementById('product-modal').classList.add('active');
+    }
+
+    function editProduct(index) {
+        const product = products[index];
+        editingProductId = index;
+        uploadedImageData = null;
+        
+        document.getElementById('modal-title').textContent = 'Edit Product';
+        document.getElementById('product-name-en').value = product.name || '';
+        document.getElementById('product-name-am').value = product.name_am || '';
+        document.getElementById('product-desc-en').value = product.description || '';
+        document.getElementById('product-desc-am').value = product.description_am || '';
+        document.getElementById('product-price').value = product.price || '';
+        document.getElementById('product-old-price').value = product.oldPrice || '';
+        loadCategoriesIntoProductForm();
+        document.getElementById('product-category').value = product.category || '';
+        document.getElementById('product-stock').value = product.stock || 0;
+        document.getElementById('product-status').value = product.status || 'active';
+        document.getElementById('product-rating').value = product.rating || 4.5;
+        document.getElementById('product-badge').value = product.badge || '';
+        document.getElementById('product-image-data').value = '';
+        document.getElementById('product-image-input').value = '';
+        
+        const preview = document.getElementById('image-preview');
+        if (product.image) {
+            preview.innerHTML = `<img src="${product.image}" style="width:100%;height:100%;object-fit:cover;">`;
+            document.getElementById('remove-image-btn').style.display = 'inline-block';
+        }
+        
+        document.getElementById('product-modal').classList.add('active');
+    }
+
+    function toggleProductStatus(index) {
+        products[index].status = products[index].status === 'inactive' ? 'active' : 'inactive';
+        syncToWebsite();
+        loadProducts();
+        loadDashboard();
+        showToast(`Product ${products[index].status === 'active' ? 'activated' : 'deactivated'}`);
+    }
+
+    function deleteProduct(index) {
+        if (confirm('Delete this product?')) {
+            products.splice(index, 1);
+            syncToWebsite();
+            loadProducts();
+            loadDashboard();
+            showToast('Product deleted');
+        }
+    }
+
+    function viewOrder(index) {
+        const order = orders[index];
+        if (!order) return;
+        let itemsList = '';
+        order.items?.forEach(item => {
+            itemsList += `• ${item.name} x ${item.quantity} = ETB ${(item.price * item.quantity).toLocaleString()}\n`;
+        });
+        alert(`
+ORDER: ${order.orderId}
+Status: ${getStatusText(order.status || 'pending')}
+
+CUSTOMER:
+${order.name}
+${order.email}
+${order.phone || 'N/A'}
+${order.city || ''}, ${order.address || ''}
+
+ITEMS:
+${itemsList}
+Total: ETB ${(order.finalTotal || order.total || 0).toLocaleString()}
+        `);
+    }
+
+    function filterProducts() {
+        const search = document.getElementById('product-search')?.value.toLowerCase() || '';
+        const category = document.getElementById('category-filter')?.value || 'all';
+        const status = document.getElementById('status-filter')?.value || 'all';
+        const tbody = document.getElementById('products-table-body');
+        tbody.innerHTML = '';
+        
+        products.filter(p => 
+            p.name.toLowerCase().includes(search) && 
+            (category === 'all' || p.category === category) &&
+            (status === 'all' || p.status === status)
+        ).forEach((product) => {
+            const originalIndex = products.indexOf(product);
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td>${product.id || originalIndex + 1}</td>
+                <td><img src="${product.image}" style="width:50px;height:50px;border-radius:5px;" onerror="this.src='https://placehold.co/50x50'"></td>
+                <td>${product.name}</td>
+                <td>${product.category}</td>
+                <td>ETB ${product.price?.toLocaleString()}</td>
+                <td>${product.stock}</td>
+                <td><span class="status-badge ${product.status === 'active' ? 'status-active' : 'status-inactive'}">${product.status || 'active'}</span></td>
+                <td>
+                    <button class="action-btn btn-edit" onclick="editProduct(${originalIndex})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn btn-toggle" onclick="toggleProductStatus(${originalIndex})"><i class="fas fa-power-off"></i></button>
+                    <button class="action-btn btn-delete" onclick="deleteProduct(${originalIndex})"><i class="fas fa-trash"></i></button>
+                </td>`;
+        });
+    }
+
+    document.getElementById('product-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const imageData = document.getElementById('product-image-data').value;
+        const productNameEn = document.getElementById('product-name-en').value;
+        
+        const productData = {
+            name: productNameEn,
+            name_am: document.getElementById('product-name-am').value,
+            description: document.getElementById('product-desc-en').value,
+            description_am: document.getElementById('product-desc-am').value,
+            price: parseFloat(document.getElementById('product-price').value),
+            category: document.getElementById('product-category').value,
+            stock: parseInt(document.getElementById('product-stock').value),
+            status: document.getElementById('product-status').value,
+            rating: parseFloat(document.getElementById('product-rating').value),
+            badge: document.getElementById('product-badge')?.value || undefined,
+            image: imageData || `https://placehold.co/400x300/2563eb/ffffff?text=${encodeURIComponent(productNameEn.substring(0, 20))}`
+        };
+        
+        if (editingProductId !== null) {
+            if (!imageData && products[editingProductId].image) productData.image = products[editingProductId].image;
+            products[editingProductId] = {...products[editingProductId], ...productData};
+            showToast('✅ Product updated');
+        } else {
+            productData.id = Date.now();
+            products.push(productData);
+            showToast('✅ Product added');
+        }
+        
+        syncToWebsite();
+        closeModal('product-modal');
+        this.reset();
+        loadProducts();
+        loadDashboard();
+    });
+
+    document.getElementById('profile-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const userData = JSON.parse(sessionStorage.getItem('currentUser')) || {};
+        userData.name = document.getElementById('profile-name').value;
+        userData.email = document.getElementById('profile-email').value;
+        userData.phone = document.getElementById('profile-phone').value;
+        sessionStorage.setItem('currentUser', JSON.stringify(userData));
+        document.getElementById('current-user').textContent = userData.name;
+        showToast('✅ Profile updated');
+    });
+
+    document.getElementById('password-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        
+        if (newPassword !== confirmPassword) { showToast('❌ Passwords do not match'); return; }
+        if (newPassword.length < 6) { showToast('❌ Minimum 6 characters'); return; }
+        
+        this.reset();
+        showToast('✅ Password changed');
+    });
+
+    document.getElementById('store-settings-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const settings = {
+            storeName: document.getElementById('store-name').value,
+            email: document.getElementById('store-email').value,
+            phone: document.getElementById('store-phone').value,
+            location: document.getElementById('store-location').value
+        };
+        localStorage.setItem('storeSettings', JSON.stringify(settings));
+        showToast('✅ Store settings saved');
+    });
+
+    function closeModal(id) { document.getElementById(id)?.classList.remove('active'); }
+
+    function showToast(message) {
+        const existing = document.querySelector('.toast');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 50);
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 200); }, 2500);
+    }
+
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) {
+            e.target.classList.remove('active');
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            document.getElementById('sidebar').classList.remove('mobile-open');
+            document.getElementById('sidebar-overlay').classList.remove('active');
+        }
+    });
+
+    function logout() {
+        sessionStorage.removeItem('currentUser');
+        window.location.href = 'admin.html';
+    }
+
+    // Export all functions
+    window.switchPage = switchPage;
+    window.toggleSidebar = toggleSidebar;
+    window.closeSidebarMobile = closeSidebarMobile;
+    window.toggleProductStatus = toggleProductStatus;
+    window.deleteProduct = deleteProduct;
+    window.showAddProductModal = showAddProductModal;
+    window.editProduct = editProduct;
+    window.closeModal = closeModal;
+    window.viewOrder = viewOrder;
+    window.filterProducts = filterProducts;
+    window.logout = logout;
+    window.handleImageUpload = handleImageUpload;
+    window.removeImage = removeImage;
+    window.showAddCategoryModal = showAddCategoryModal;
+    window.editCategory = editCategory;
+    window.toggleCategoryStatus = toggleCategoryStatus;
+    window.deleteCategory = deleteCategory;
+    window.updateOrderStatusInstant = updateOrderStatusInstant;
+    window.getStatusText = getStatusText;
+    window.sendOrderStatusNotification = sendOrderStatusNotification;
+    window.setAdminLanguage = setAdminLanguage;
+
+    // ==================== INITIALIZE ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        setAdminLanguage(currentAdminLanguage);
+        loadDashboard();
+        loadCategories();
+        loadOrders();
+        loadCustomers();
+        loadSettings();
+    });
+
+    // Load immediately if DOM is already ready
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setAdminLanguage(currentAdminLanguage);
+        loadDashboard();
+        loadCategories();
+        loadOrders();
+        loadCustomers();
+        loadSettings();
+    }
+</script>
+</body>
+</html>
