@@ -2088,3 +2088,124 @@ article {
         order: 3;
     }
 }
+/* Navigation Toggle Button - Updated Style */
+.nav-toggle-btn {
+    display: none;
+    background: var(--light-background);
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--text-color);
+    padding: 8px 12px;
+    min-height: 40px;
+    min-width: 40px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.nav-toggle-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.nav-toggle-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.nav-toggle-btn .toggle-icon {
+    transition: transform 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.nav-toggle-btn.active .toggle-icon {
+    transform: rotate(90deg);
+}
+
+/* Ensure login button is always visible */
+.admin-login-btn {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    color: var(--light-text);
+    font-size: 0.9rem;
+    transition: var(--transition);
+    min-height: 44px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+
+.admin-login-btn:hover {
+    color: var(--primary-color);
+    background: var(--light-background);
+}
+
+.admin-login-btn i {
+    font-size: 1.2rem;
+}
+
+/* Show toggle button on mobile */
+@media (max-width: 768px) {
+    .nav-toggle-btn {
+        display: flex;
+    }
+    
+    /* Adjust nav-actions for mobile */
+    .nav-actions {
+        gap: 0.5rem;
+    }
+    
+    /* Ensure login button visible on mobile */
+    .admin-login-btn {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        padding: 5px 8px;
+        min-width: 40px;
+        justify-content: center;
+    }
+    
+    /* Hide text on very small screens but keep icon */
+    .admin-text {
+        display: inline;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Hide admin text on very small screens */
+    .admin-text {
+        display: none;
+    }
+    
+    .admin-login-btn {
+        padding: 5px;
+        min-width: 40px;
+    }
+}
+
+/* Desktop: Position toggle button */
+@media (min-width: 769px) {
+    .nav-toggle-btn {
+        display: flex;
+        order: 2;
+        margin-left: 1rem;
+    }
+    
+    .nav-menu {
+        order: 1;
+    }
+    
+    .nav-actions {
+        order: 3;
+    }
+}
