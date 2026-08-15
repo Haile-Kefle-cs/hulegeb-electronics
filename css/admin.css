@@ -24,6 +24,8 @@
     padding: 8px 12px;
     transition: all 0.3s ease;
     border-radius: 4px;
+    min-height: 44px; /* Better touch target */
+    min-width: 44px; /* Better touch target */
 }
 
 .lang-btn.active {
@@ -69,6 +71,7 @@ body {
     background: var(--background);
     color: var(--text-color);
     overflow-x: hidden;
+    width: 100%;
 }
 
 /* ==================== Login Styles ==================== */
@@ -140,6 +143,7 @@ body {
     transition: all 0.3s ease;
     -webkit-appearance: none;
     appearance: none;
+    min-height: 44px; /* Better touch target */
 }
 
 .login-form input:focus {
@@ -157,7 +161,9 @@ body {
     border: none;
     cursor: pointer;
     color: var(--light-text);
-    padding: 5px;
+    padding: 10px;
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .login-options {
@@ -193,6 +199,7 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    min-height: 44px; /* Better touch target */
 }
 
 .btn-login:hover {
@@ -233,6 +240,7 @@ body {
     display: inline-block;
     margin-bottom: 10px;
     transition: all 0.3s ease;
+    padding: 5px;
 }
 
 .back-link:hover {
@@ -249,6 +257,7 @@ body {
     display: flex;
     min-height: 100vh;
     position: relative;
+    width: 100%;
 }
 
 /* Sidebar */
@@ -299,6 +308,7 @@ body {
     padding: 20px 0;
     flex: 1;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .sidebar-menu li {
@@ -309,6 +319,7 @@ body {
     align-items: center;
     gap: 10px;
     white-space: nowrap;
+    min-height: 44px; /* Better touch target */
 }
 
 .sidebar-menu li:hover {
@@ -345,6 +356,7 @@ body {
     background: none;
     border: none;
     font-size: 1rem;
+    min-height: 44px; /* Better touch target */
 }
 
 .sidebar-link:hover {
@@ -362,10 +374,13 @@ body {
     padding: 20px;
     transition: all 0.3s ease;
     min-height: 100vh;
+    width: calc(100% - var(--sidebar-width));
+    max-width: 100%;
 }
 
 .main-content.expanded {
     margin-left: var(--sidebar-collapsed);
+    width: calc(100% - var(--sidebar-collapsed));
 }
 
 /* Top Bar */
@@ -382,6 +397,13 @@ body {
     gap: 10px;
 }
 
+.top-bar h1 {
+    font-size: 1.3rem;
+    flex: 1;
+    text-align: center;
+    margin: 0;
+}
+
 .menu-toggle {
     display: none;
     background: none;
@@ -389,7 +411,15 @@ body {
     font-size: 1.5rem;
     cursor: pointer;
     color: var(--text-color);
-    padding: 5px;
+    padding: 10px;
+    min-height: 44px;
+    min-width: 44px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.menu-toggle:hover {
+    background: var(--background);
 }
 
 .user-info {
@@ -408,6 +438,8 @@ body {
 /* Pages */
 .page {
     display: none;
+    width: 100%;
+    max-width: 100%;
 }
 
 .page.active {
@@ -432,6 +464,7 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 15px;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .stat-card {
@@ -472,10 +505,14 @@ body {
     margin-bottom: 20px;
     flex-wrap: wrap;
     gap: 10px;
+    width: 100%;
 }
 
-.page-header h1 {
+.page-header h1,
+.page-header h2 {
     font-size: 1.5rem;
+    margin: 0;
+    flex: 1;
 }
 
 .btn-add {
@@ -488,6 +525,11 @@ body {
     font-weight: 500;
     transition: all 0.3s ease;
     font-size: 0.9rem;
+    min-height: 44px; /* Better touch target */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
 }
 
 .btn-add:hover {
@@ -508,6 +550,10 @@ body {
     cursor: pointer;
     font-weight: 500;
     transition: all 0.3s ease;
+    min-height: 44px; /* Better touch target */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .btn-save:hover {
@@ -523,6 +569,10 @@ body {
     cursor: pointer;
     font-weight: 500;
     transition: all 0.3s ease;
+    min-height: 44px; /* Better touch target */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .btn-cancel:hover {
@@ -535,6 +585,7 @@ body {
     gap: 10px;
     margin-bottom: 20px;
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .search-filter input,
@@ -546,6 +597,7 @@ body {
     font-family: inherit;
     -webkit-appearance: none;
     appearance: none;
+    min-height: 44px; /* Better touch target */
 }
 
 .search-filter input {
@@ -556,6 +608,7 @@ body {
 .search-filter select {
     background: white;
     cursor: pointer;
+    min-width: 130px;
 }
 
 /* Table */
@@ -566,6 +619,8 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
 }
 
 .admin-table {
@@ -598,6 +653,7 @@ body {
     font-size: 0.85rem;
     font-weight: 500;
     display: inline-block;
+    white-space: nowrap;
 }
 
 .status-active {
@@ -618,6 +674,8 @@ body {
     margin: 0 2px;
     transition: all 0.3s ease;
     font-size: 0.9rem;
+    min-height: 40px; /* Better touch target */
+    min-width: 40px; /* Better touch target */
 }
 
 .btn-edit {
@@ -663,6 +721,8 @@ body {
     justify-content: center;
     z-index: 2000;
     padding: 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal.active {
@@ -679,6 +739,7 @@ body {
     overflow-y: auto;
     position: relative;
     animation: slideIn 0.3s ease;
+    -webkit-overflow-scrolling: touch;
 }
 
 @keyframes slideIn {
@@ -703,6 +764,9 @@ body {
     color: var(--light-text);
     padding: 5px;
     line-height: 1;
+    min-height: 44px;
+    min-width: 44px;
+    z-index: 10;
 }
 
 .close-modal:hover {
@@ -716,6 +780,11 @@ body {
     flex-wrap: wrap;
 }
 
+.modal-actions button {
+    flex: 1;
+    min-width: 120px;
+}
+
 /* Form */
 .form-row {
     display: grid;
@@ -725,6 +794,7 @@ body {
 
 .form-group {
     margin-bottom: 15px;
+    width: 100%;
 }
 
 .form-group label {
@@ -745,6 +815,8 @@ body {
     font-family: inherit;
     -webkit-appearance: none;
     appearance: none;
+    min-height: 44px; /* Better touch target */
+    max-width: 100%;
 }
 
 .form-group textarea {
@@ -759,13 +831,33 @@ body {
     border-color: var(--primary-color);
 }
 
-/* Settings Form */
-.settings-form {
+/* Settings */
+.settings-container {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+}
+
+.settings-card {
     background: white;
     padding: 25px;
     border-radius: 10px;
-    max-width: 500px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.settings-card h3 {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.settings-card h3 i {
+    color: var(--primary-color);
+    width: 24px;
+    text-align: center;
 }
 
 /* Recent Activity */
@@ -776,6 +868,12 @@ body {
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+    width: 100%;
+}
+
+.quick-actions h3 {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
 }
 
 .quick-action-buttons {
@@ -794,6 +892,10 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 0.9rem;
+    min-height: 44px; /* Better touch target */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .quick-action-buttons button:hover {
@@ -834,6 +936,7 @@ body {
     text-align: center;
     background: #f9fafb;
     transition: all 0.3s ease;
+    width: 100%;
 }
 
 .image-upload-container:hover {
@@ -888,6 +991,10 @@ body {
     cursor: pointer;
     font-weight: 500;
     transition: all 0.3s ease;
+    min-height: 44px; /* Better touch target */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .btn-upload:hover {
@@ -904,6 +1011,10 @@ body {
     cursor: pointer;
     font-weight: 500;
     transition: all 0.3s ease;
+    min-height: 44px; /* Better touch target */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .btn-remove-image:hover {
@@ -921,6 +1032,8 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
 }
 
 .sidebar-overlay.active {
@@ -936,6 +1049,10 @@ body {
     .form-row {
         grid-template-columns: 1fr;
     }
+    
+    .settings-container {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
@@ -944,6 +1061,8 @@ body {
         width: var(--sidebar-width);
         transform: translateX(-100%);
         transition: transform 0.3s ease;
+        position: fixed;
+        z-index: 1000;
     }
     
     .sidebar.mobile-open {
@@ -951,10 +1070,11 @@ body {
         width: var(--sidebar-width);
     }
     
+    /* Show all sidebar text on mobile */
     .sidebar-header h2,
     .sidebar-menu li span,
     .sidebar-footer span {
-        display: inline;
+        display: inline !important;
     }
     
     .sidebar-menu li {
@@ -967,11 +1087,14 @@ body {
     .main-content.expanded {
         margin-left: 0;
         padding: 15px;
+        width: 100%;
     }
     
     /* Show menu toggle */
     .menu-toggle {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     /* Top Bar Adjustments */
@@ -980,25 +1103,42 @@ body {
         position: sticky;
         top: 0;
         z-index: 100;
+        background: white;
+        flex-wrap: nowrap;
+    }
+    
+    .top-bar h1 {
+        font-size: 1.1rem;
+        text-align: center;
     }
     
     .user-info span {
         display: none;
     }
     
+    .user-info {
+        flex-shrink: 0;
+    }
+    
+    .user-info i {
+        font-size: 1.8rem;
+    }
+    
     /* Page Header */
     .page-header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
     }
     
-    .page-header h1 {
+    .page-header h1,
+    .page-header h2 {
         font-size: 1.3rem;
+        text-align: center;
     }
     
     .btn-add {
         width: 100%;
-        text-align: center;
+        justify-content: center;
     }
     
     /* Stats Grid */
@@ -1015,37 +1155,73 @@ body {
         font-size: 1.5rem;
     }
     
+    .stat-card i {
+        font-size: 1.5rem;
+    }
+    
     /* Search and Filter */
     .search-filter {
         flex-direction: column;
+        gap: 8px;
     }
     
     .search-filter input,
     .search-filter select {
         width: 100%;
         min-width: auto;
+        flex: none;
     }
     
     /* Modal */
+    .modal {
+        padding: 10px;
+    }
+    
     .modal-content {
-        width: 95%;
+        width: 100%;
         padding: 20px;
-        margin: 10px;
+        margin: 0;
+        max-height: 90vh;
+        border-radius: 8px;
     }
     
     .form-row {
         grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .modal-actions button {
+        width: 100%;
+        flex: none;
     }
     
     /* Table Actions */
     .action-btn {
-        padding: 6px 8px;
+        padding: 8px;
         font-size: 0.85rem;
+        min-height: 40px;
+        min-width: 40px;
     }
     
-    /* Settings Form */
-    .settings-form {
+    /* Settings */
+    .settings-card {
         padding: 20px;
+    }
+    
+    /* Quick Actions */
+    .quick-action-buttons {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .quick-action-buttons button {
+        width: 100%;
+        justify-content: center;
     }
     
     /* Image Upload */
@@ -1055,11 +1231,13 @@ body {
     
     .image-upload-buttons {
         flex-direction: column;
+        gap: 8px;
     }
     
     .btn-upload,
     .btn-remove-image {
         width: 100%;
+        justify-content: center;
     }
     
     /* Toast */
@@ -1075,18 +1253,34 @@ body {
     .language-switcher-admin,
     .admin-language-switcher {
         gap: 5px;
+        padding: 8px;
     }
     
     .lang-btn {
-        padding: 6px 10px;
+        padding: 8px 10px;
         font-size: 0.85rem;
+        min-height: 40px;
+        min-width: 40px;
     }
 }
 
 @media (max-width: 480px) {
     /* Small Mobile Devices */
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    
+    .stat-card {
+        padding: 12px;
+    }
+    
+    .stat-card h3 {
+        font-size: 1.3rem;
+    }
+    
+    .stat-card p {
+        font-size: 0.8rem;
     }
     
     .login-box {
@@ -1108,45 +1302,88 @@ body {
     
     .admin-table th,
     .admin-table td {
-        padding: 10px;
-        font-size: 0.85rem;
+        padding: 8px;
+        font-size: 0.8rem;
     }
     
     .status-badge {
         padding: 4px 8px;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
     
     .modal-content {
         padding: 15px;
-        max-height: 90vh;
+        max-height: 92vh;
     }
     
-    .modal-actions {
-        flex-direction: column;
+    .modal-content h2 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
     }
     
-    .modal-actions button {
-        width: 100%;
-    }
-    
-    .page-header h1 {
+    .page-header h1,
+    .page-header h2 {
         font-size: 1.2rem;
     }
     
     .btn-add,
     .btn-save,
     .btn-cancel {
-        padding: 8px 16px;
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        min-height: 40px;
+    }
+    
+    .form-group label {
         font-size: 0.85rem;
     }
     
-    .quick-action-buttons {
-        flex-direction: column;
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        padding: 8px;
+        font-size: 0.85rem;
+        min-height: 40px;
     }
     
+    .settings-card {
+        padding: 15px;
+    }
+    
+    .settings-card h3 {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 360px) {
+    /* Very Small Devices */
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .top-bar {
+        padding: 10px;
+    }
+    
+    .top-bar h1 {
+        font-size: 1rem;
+    }
+    
+    .main-content,
+    .main-content.expanded {
+        padding: 10px;
+    }
+    
+    .modal-content {
+        padding: 12px;
+    }
+    
+    .btn-add,
+    .btn-save,
+    .btn-cancel,
     .quick-action-buttons button {
-        width: 100%;
+        font-size: 0.8rem;
+        padding: 8px 12px;
     }
 }
 
@@ -1157,7 +1394,8 @@ body {
     .btn-cancel:hover,
     .action-btn:hover,
     .btn-upload:hover,
-    .btn-remove-image:hover {
+    .btn-remove-image:hover,
+    .quick-action-buttons button:hover {
         transform: none;
     }
     
@@ -1181,6 +1419,11 @@ body {
     .image-preview {
         height: 120px;
     }
+    
+    .sidebar {
+        width: 80%;
+        max-width: 300px;
+    }
 }
 
 /* Ensure pages display properly */
@@ -1190,4 +1433,21 @@ body {
 
 .page.active {
     display: block !important;
+}
+
+/* Fix for iOS Safari 100vh issue */
+@supports (-webkit-touch-callout: none) {
+    .admin-container,
+    .login-container {
+        min-height: -webkit-fill-available;
+    }
+}
+
+/* Prevent text zoom on iOS */
+@media (max-width: 768px) {
+    input, 
+    select, 
+    textarea {
+        font-size: 16px !important; /* Prevents iOS auto-zoom */
+    }
 }
