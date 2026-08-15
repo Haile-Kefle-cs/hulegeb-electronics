@@ -301,7 +301,7 @@ function quickView(productId) {
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 }
 
-// ==================== Cart Functions ====================
+// ==================== INSTANT CART ====================
 function addToCart(productId) {
     const product = currentProducts.find(p => p.id === productId);
     if (!product) return;
@@ -474,7 +474,7 @@ function closeCartAndShop() {
     document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
 }
 
-// ==================== CHECKOUT WITH FORMSPLIT EMAIL ====================
+// ==================== INSTANT CHECKOUT WITH SUCCESS ====================
 function handleCheckout(e) {
     e.preventDefault();
     
@@ -485,53 +485,47 @@ function handleCheckout(e) {
         phone: document.getElementById('order-phone').value,
         city: document.getElementById('order-city').value,
         address: document.getElementById('order-address').value,
-        notes: document.getElementById('order-notes') ? document.getElementById('order-notes').value : '',
-        items: cart,
+        notes: document.getElementById('order-notes').value,
+        items: cart.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            subtotal: item.price * item.quantity
+        })),
         total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        deliveryFee: cart.reduce((sum, item) => sum + item.price * item.quantity, 0) >= 50000 ? 0 : 200,
         status: 'pending',
         date: new Date().toISOString()
     };
-    orderData.finalTotal = orderData.total;
+    orderData.finalTotal = orderData.total + orderData.deliveryFee;
     
-    if (cart.length === 0) { showToast('Cart is empty'); return; }
+    if (cart.length === 0) { showToast(translations[currentLanguage].emptyCart); return; }
     
-    // Save locally
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    // Save instantly
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
     orders.push(orderData);
     localStorage.setItem('orders', JSON.stringify(orders));
+    localStorage.setItem('ordersUpdated', Date.now().toString());
     
-    // SEND EMAIL VIA FORMSPLIT (FREE - NO SERVER NEEDED)
-    fetch('https://formsubmit.co/ajax/hulgebmereja2017@gmail.com', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-            _subject: '🛒 New Order: ' + orderData.orderId + ' - ' + orderData.name,
-            _template: 'table',
-            'Order ID': orderData.orderId,
-            'Customer Name': orderData.name,
-            'Customer Email': orderData.email,
-            'Customer Phone': orderData.phone,
-            'City': orderData.city,
-            'Address': orderData.address,
-            'Notes': orderData.notes || 'None',
-            'Total': 'ETB ' + orderData.finalTotal,
-            'Items': JSON.stringify(cart.map(function(i) { return i.name + ' x ' + i.quantity; }))
-        })
-    }).then(function(res) { return res.json(); })
-      .then(function(data) { console.log('Email sent via FormSubmit'); })
-      .catch(function(err) { console.log('Email error:', err); });
-    
-    // Clear cart
+    // Clear cart instantly
     cart = [];
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCart();
     
-    // Close modal
+    // Close modal instantly
     checkoutModal.classList.remove('active');
     checkoutForm.reset();
     
-    // Show success
+    // Show success instantly
     showOrderSuccess(orderData);
+    
+    // Send email in background
+    fetch('http://localhost:3000/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+    }).catch(() => console.log('Background email'));
 }
 
 function showOrderSuccess(orderData) {
@@ -541,12 +535,21 @@ function showOrderSuccess(orderData) {
     
     overlay.innerHTML = `
         <div class="order-success-box">
-            <div class="success-checkmark"><div class="check-icon"><i class="fas fa-check"></i></div></div>
+            <div class="success-checkmark">
+                <div class="check-icon"><i class="fas fa-check"></i></div>
+            </div>
             <h2 class="success-title">${currentLanguage === 'am' ? '✅ ትዕዛዝ በተሳካ ሁኔታ ተልኳል!' : '✅ Order Placed Successfully!'}</h2>
-            <p>Order ID: <strong>${orderData.orderId}</strong></p>
-            <p>Total: <strong>${formatETB(orderData.finalTotal)}</strong></p>
+            <div class="success-order-id">
+                <p>${currentLanguage === 'am' ? 'የትዕዛዝ ቁጥር' : 'Order ID'}: <strong>${orderData.orderId}</strong></p>
+            </div>
+            <div class="success-details">
+                <p>${currentLanguage === 'am' ? 'ጠቅላላ' : 'Total'}: <strong>${formatETB(orderData.finalTotal)}</strong></p>
+                <p>${currentLanguage === 'am' ? 'ደንበኛ' : 'Customer'}: <strong>${orderData.name}</strong></p>
+            </div>
+            <p class="success-message">${currentLanguage === 'am' ? 'ለትዕዛዝዎ እናመሰግናለን! በቅርቡ እናገኝዎታለን።' : 'Thank you for your order! We will contact you soon for delivery.'}</p>
             <div class="success-actions">
-                <button class="btn btn-primary" onclick="closeSuccessAndGoHome()">OK</button>
+                <button class="btn btn-primary" onclick="closeSuccessAndGoHome()"><i class="fas fa-home"></i> ${currentLanguage === 'am' ? 'ወደ መነሻ' : 'Back to Home'}</button>
+                <button class="btn btn-secondary" onclick="closeSuccessAndContinue()"><i class="fas fa-shopping-bag"></i> ${currentLanguage === 'am' ? 'ግዢ ቀጥል' : 'Continue Shopping'}</button>
             </div>
         </div>`;
     
@@ -566,29 +569,24 @@ function closeSuccessAndContinue() {
     document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
 }
 
-// ==================== CONTACT FORM WITH FORMSPLIT ====================
+// ==================== Contact Form ====================
 function handleContactForm(e) {
     e.preventDefault();
-    
     const contactData = {
         name: document.getElementById('contact-name').value,
         email: document.getElementById('contact-email').value,
-        subject: document.getElementById('contact-subject') ? document.getElementById('contact-subject').value : 'Contact',
-        message: document.getElementById('contact-message').value
+        subject: document.getElementById('contact-subject')?.value || 'Contact',
+        message: document.getElementById('contact-message').value,
+        date: new Date().toISOString()
     };
     
-    fetch('https://formsubmit.co/ajax/hulgebmereja2017@gmail.com', {
+    fetch('http://localhost:3000/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-            _subject: '📧 Contact: ' + contactData.subject,
-            'Name': contactData.name,
-            'Email': contactData.email,
-            'Message': contactData.message
-        })
-    });
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contactData)
+    }).catch(() => console.log('Background email'));
     
-    showToast('Message sent!');
+    showToast(translations[currentLanguage].messageSuccess);
     contactForm.reset();
 }
 

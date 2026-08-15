@@ -1,4 +1,4 @@
-// ==================== Admin Panel with FormSubmit Email ====================
+// ==================== Admin Panel with SMS Notifications ====================
 
 const currentUser = checkAuth('admin');
 if (!currentUser) window.location.href = 'admin.html';
@@ -30,13 +30,23 @@ if (categories.length === 0) {
 // Initialize default products
 if (products.length === 0) {
     products = [
-        { id: 1, name: 'iPhone 15 Pro Max', name_am: 'አይፎን 15 ፕሮ ማክስ', price: 185000, category: 'phones', image: 'https://placehold.co/400x300/2563eb/ffffff?text=iPhone', stock: 15, status: 'active' },
-        { id: 2, name: 'Samsung Galaxy S24', name_am: 'ሳምሰንግ ጋላክሲ S24', price: 165000, category: 'phones', image: 'https://placehold.co/400x300/7c3aed/ffffff?text=Samsung', stock: 20, status: 'active' },
-        { id: 3, name: 'MacBook Pro', name_am: 'ማክቡክ ፕሮ', price: 385000, category: 'laptops', image: 'https://placehold.co/400x300/059669/ffffff?text=MacBook', stock: 8, status: 'active' },
-        { id: 4, name: 'Sony Headphones', name_am: 'ሶኒ ሄድፎኖች', price: 45000, category: 'audio', image: 'https://placehold.co/400x300/dc2626/ffffff?text=Sony', stock: 30, status: 'active' },
-        { id: 5, name: 'PlayStation 5', name_am: 'PS5', price: 85000, category: 'gaming', image: 'https://placehold.co/400x300/be185d/ffffff?text=PS5', stock: 12, status: 'active' }
+        {
+            id: 1,
+            name: 'iPhone 15 Pro Max',
+            name_am: 'አይፎን 15 ፕሮ ማክስ',
+            description: 'Latest Apple flagship',
+            description_am: 'የቅርብ ጊዜ የአፕል ባንዲራ',
+            price: 185000,
+            category: 'phones',
+            image: 'https://placehold.co/400x300/2563eb/ffffff?text=iPhone',
+            rating: 4.9,
+            reviews: 256,
+            stock: 15,
+            status: 'active'
+        }
     ];
     localStorage.setItem('products', JSON.stringify(products));
+    localStorage.setItem('productsUpdated', Date.now().toString());
 }
 
 // ==================== Sync ====================
@@ -261,65 +271,85 @@ function updateOrderStatusInstant(index, newStatus, selectElement) {
     const order = orders[index];
     const oldStatus = order.status;
     
+    // Update immediately
     order.status = newStatus;
     order.statusUpdatedAt = new Date().toISOString();
     
+    // Save immediately
     localStorage.setItem('orders', JSON.stringify(orders));
     localStorage.setItem('ordersUpdated', Date.now().toString());
     
+    // Update dropdown color immediately
     if (selectElement) {
         selectElement.className = `status-dropdown ${getStatusClass(newStatus)}`;
     }
     
+    // Show toast immediately
     showToast(`✅ Status: ${getStatusText(newStatus)}`);
     
+    // Send Email + SMS in background
     sendOrderStatusNotification(order, newStatus, '');
     
     loadDashboard();
     console.log(`✅ Order ${order.orderId}: ${oldStatus} → ${newStatus}`);
 }
 
-// ==================== SEND STATUS EMAIL VIA FORMSPLIT ====================
+// Send Email + SMS notification
 function sendOrderStatusNotification(order, status, note) {
     const statusMessages = {
-        pending: { en: 'Your order is pending. We will process it soon.', am: 'ትዕዛዝዎ በመጠባበቅ ላይ ነው።' },
-        processing: { en: 'Your order is now being processed.', am: 'ትዕዛዝዎ በሂደት ላይ ነው።' },
-        delivered: { en: 'Your order has been delivered! Thank you.', am: 'ትዕዛዝዎ ተላክቷል! እናመሰግናለን።' },
-        completed: { en: 'Your order has been completed! Thank you.', am: 'ትዕዛዝዎ ተጠናቋል! እናመሰግናለን።' },
-        rejected: { en: 'Your order has been rejected. Contact us.', am: 'ትዕዛዝዎ ውድቅ ተደርጓል። ያግኙን።' }
+        pending: { 
+            en: 'Your order is pending. We will process it soon.', 
+            am: 'ትዕዛዝዎ በመጠባበቅ ላይ ነው። በቅርቡ እናስኬደዋለን።' 
+        },
+        processing: { 
+            en: 'Your order is now being processed.', 
+            am: 'ትዕዛዝዎ በሂደት ላይ ነው።' 
+        },
+        delivered: { 
+            en: 'Your order has been delivered! Thank you.', 
+            am: 'ትዕዛዝዎ ተላክቷል! እናመሰግናለን።' 
+        },
+        completed: { 
+            en: 'Your order has been completed! Thank you.', 
+            am: 'ትዕዛዝዎ ተጠናቋል! እናመሰግናለን።' 
+        },
+        rejected: { 
+            en: 'Your order has been rejected. Contact us.', 
+            am: 'ትዕዛዝዎ ውድቅ ተደርጓል። ያግኙን።' 
+        }
     };
     
-    // Send email to customer using FormSubmit (FREE - No server needed)
-    fetch('https://formsubmit.co/ajax/' + order.email, {
+    const notificationData = {
+        orderId: order.orderId,
+        customerName: order.name,
+        customerEmail: order.email,
+        customerPhone: order.phone,
+        status: status,
+        statusTextEn: statusMessages[status]?.en || status,
+        statusTextAm: statusMessages[status]?.am || status,
+        note: note || ''
+    };
+    
+    // Send to server (Email + SMS)
+    fetch('http://localhost:3000/api/order-status', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-            _subject: '📦 Order ' + order.orderId + ' Status: ' + statusMessages[status].en,
-            _template: 'table',
-            'Order ID': order.orderId,
-            'Status': statusMessages[status].en,
-            'Message (Amharic)': statusMessages[status].am,
-            'Note': note || 'None',
-            'Contact': 'hulgebmereja2017@gmail.com'
-        })
-    }).then(function(res) { return res.json(); })
-      .then(function(data) {
-          console.log('✅ Status email sent to:', order.email);
-          alert('✅ Status updated! Email notification sent to customer.');
-      })
-      .catch(function(err) {
-          console.log('⚠️ Status email error:', err);
-          alert('Status updated! (Email notification pending)');
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(notificationData)
+    }).then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              console.log('✅ Email sent');
+              if (data.smsSent) {
+                  console.log('✅ SMS sent to:', order.phone);
+              }
+          }
+      }).catch(error => {
+          console.log('⚠️ Server not reachable');
       });
     
     // Save notification locally
     let notifications = JSON.parse(localStorage.getItem('orderNotifications')) || [];
-    notifications.push({
-        orderId: order.orderId,
-        customerEmail: order.email,
-        status: status,
-        timestamp: new Date().toISOString()
-    });
+    notifications.push(notificationData);
     localStorage.setItem('orderNotifications', JSON.stringify(notifications));
 }
 
