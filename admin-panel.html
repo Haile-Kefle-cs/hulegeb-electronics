@@ -1,14 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin Panel - Hulegeb Electronics | የአስተዳዳሪ ፓነል</title>
     <link rel="stylesheet" href="css/admin.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body
+<body>
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    
     <div class="admin-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
@@ -24,22 +27,22 @@
             </div>
             
             <ul class="sidebar-menu">
-                <li class="active" data-page="dashboard" onclick="switchPage('dashboard')">
+                <li class="active" data-page="dashboard" onclick="switchPage('dashboard'); closeMobileSidebar();">
                     <i class="fas fa-dashboard"></i> <span data-i18n="dashboard">Dashboard</span>
                 </li>
-                <li data-page="products" onclick="switchPage('products')">
+                <li data-page="products" onclick="switchPage('products'); closeMobileSidebar();">
                     <i class="fas fa-box"></i> <span data-i18n="products">Products</span>
                 </li>
-                <li data-page="categories" onclick="switchPage('categories')">
+                <li data-page="categories" onclick="switchPage('categories'); closeMobileSidebar();">
                     <i class="fas fa-tags"></i> <span data-i18n="categories">Categories</span>
                 </li>
-                <li data-page="orders" onclick="switchPage('orders')">
+                <li data-page="orders" onclick="switchPage('orders'); closeMobileSidebar();">
                     <i class="fas fa-shopping-cart"></i> <span data-i18n="orders">Orders</span>
                 </li>
-                <li data-page="customers" onclick="switchPage('customers')">
+                <li data-page="customers" onclick="switchPage('customers'); closeMobileSidebar();">
                     <i class="fas fa-users"></i> <span data-i18n="customers">Customers</span>
                 </li>
-                <li data-page="settings" onclick="switchPage('settings')">
+                <li data-page="settings" onclick="switchPage('settings'); closeMobileSidebar();">
                     <i class="fas fa-cog"></i> <span data-i18n="settings">Settings</span>
                 </li>
             </ul>
@@ -55,9 +58,9 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content" id="main-content">
             <div class="top-bar">
-                <button class="menu-toggle" onclick="toggleSidebar()">
+                <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
                     <i class="fas fa-bars"></i>
                 </button>
                 <h1 id="page-title" data-i18n="dashboard">Dashboard</h1>
@@ -68,7 +71,7 @@
             </div>
 
             <!-- Dashboard Page -->
-            <div class="page active" id="dashboard-page" style="display: block;">
+            <div class="page active" id="dashboard-page">
                 <div class="stats-grid">
                     <div class="stat-card">
                         <i class="fas fa-box"></i>
@@ -104,7 +107,7 @@
             </div>
 
             <!-- Products Page -->
-            <div class="page" id="products-page" style="display: none;">
+            <div class="page" id="products-page">
                 <div class="page-header">
                     <h2 data-i18n="manageProducts">Manage Products</h2>
                     <button class="btn-add" onclick="showAddProductModal()">
@@ -144,7 +147,7 @@
             </div>
 
             <!-- Categories Page -->
-            <div class="page" id="categories-page" style="display: none;">
+            <div class="page" id="categories-page">
                 <div class="page-header">
                     <h2 data-i18n="manageCategories">Manage Categories</h2>
                     <button class="btn-add" onclick="showAddCategoryModal()">
@@ -171,8 +174,10 @@
             </div>
 
             <!-- Orders Page with Status Actions -->
-            <div class="page" id="orders-page" style="display: none;">
-                <h2 data-i18n="orders">Orders</h2>
+            <div class="page" id="orders-page">
+                <div class="page-header">
+                    <h2 data-i18n="orders">Orders</h2>
+                </div>
                 <div class="table-container">
                     <table class="admin-table">
                         <thead>
@@ -193,8 +198,10 @@
             </div>
 
             <!-- Customers Page -->
-            <div class="page" id="customers-page" style="display: none;">
-                <h2 data-i18n="customers">Customers</h2>
+            <div class="page" id="customers-page">
+                <div class="page-header">
+                    <h2 data-i18n="customers">Customers</h2>
+                </div>
                 <div class="table-container">
                     <table class="admin-table">
                         <thead>
@@ -212,8 +219,10 @@
             </div>
 
             <!-- Settings Page -->
-            <div class="page" id="settings-page" style="display: none;">
-                <h2 data-i18n="settings">Settings</h2>
+            <div class="page" id="settings-page">
+                <div class="page-header">
+                    <h2 data-i18n="settings">Settings</h2>
+                </div>
                 <div class="settings-container">
                     <div class="settings-card">
                         <h3><i class="fas fa-user"></i> <span data-i18n="profileInfo">Profile Information</span></h3>
@@ -491,5 +500,111 @@
     <script src="js/admin-translations.js"></script>
     <script src="js/admin.js"></script>
     <script src="js/admin-panel.js"></script>
+    
+    <!-- Additional JavaScript for mobile sidebar functionality -->
+    <script>
+        // Mobile sidebar functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
+            } else {
+                sidebar.classList.toggle('collapsed');
+                document.getElementById('main-content').classList.toggle('expanded');
+            }
+        }
+        
+        function closeMobileSidebar() {
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            }
+        }
+        
+        // Close sidebar on resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            }
+        });
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        });
+        
+        // Prevent body scroll when modal is open
+        function preventBodyScroll(prevent) {
+            document.body.style.overflow = prevent ? 'hidden' : '';
+        }
+        
+        // Enhanced modal functions
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+                preventBodyScroll(true);
+            }
+        }
+        
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+                preventBodyScroll(false);
+            }
+        }
+        
+        // Handle escape key to close modals
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal.active');
+                openModals.forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                preventBodyScroll(false);
+            }
+        });
+        
+        // Touch swipe to close sidebar
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.addEventListener('touchstart', function(event) {
+            touchStartX = event.changedTouches[0].screenX;
+        }, { passive: true });
+        
+        document.addEventListener('touchend', function(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+        
+        function handleSwipe() {
+            const swipeDistance = touchEndX - touchStartX;
+            const sidebar = document.getElementById('sidebar');
+            
+            // Swipe right to open sidebar
+            if (swipeDistance > 100 && touchStartX < 50 && window.innerWidth <= 768) {
+                sidebar.classList.add('mobile-open');
+                document.getElementById('sidebar-overlay').classList.add('active');
+            }
+            
+            // Swipe left to close sidebar
+            if (swipeDistance < -100 && sidebar.classList.contains('mobile-open')) {
+                sidebar.classList.remove('mobile-open');
+                document.getElementById('sidebar-overlay').classList.remove('active');
+            }
+        }
+    </script>
 </body>
 </html>
