@@ -1,12 +1,519 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Hulegeb Electronics | የአስተዳዳሪ መግቢያ</title>
-    <link rel="stylesheet" href="css/admin.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ==================== Admin Login Styles ==================== */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --text-color: #1f2937;
+            --light-text: #6b7280;
+            --background: #ffffff;
+            --light-background: #f3f4f6;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* ==================== Login Container ==================== */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            width: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Decorative background elements */
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ==================== Login Box ==================== */
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.5s ease;
+            overflow: hidden;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ==================== Language Switcher ==================== */
+        .language-switcher-admin {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .language-switcher-admin span {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        .lang-btn {
+            background: none;
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--light-text);
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            border-radius: 25px;
+            min-height: 40px;
+            min-width: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lang-btn.active {
+            color: var(--primary-color);
+            font-weight: 700;
+            background: rgba(37, 99, 235, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .lang-btn:hover {
+            background: var(--light-background);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* ==================== Login Header ==================== */
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .login-header i {
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .login-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            word-wrap: break-word;
+            color: var(--text-color);
+        }
+
+        .login-header p {
+            color: var(--light-text);
+            font-size: 0.9rem;
+            word-wrap: break-word;
+        }
+
+        /* ==================== Login Form ==================== */
+        .login-form {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .login-form label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            word-wrap: break-word;
+        }
+
+        .login-form label i {
+            color: var(--primary-color);
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
+            min-height: 50px;
+            max-width: 100%;
+            font-family: inherit;
+            background: #f9fafb;
+        }
+
+        .login-form input[type="text"]:focus,
+        .login-form input[type="password"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        .login-form input::placeholder {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--light-text);
+            padding: 10px;
+            min-height: 40px;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-password:hover {
+            background: var(--light-background);
+            color: var(--primary-color);
+        }
+
+        .toggle-password i {
+            font-size: 1.1rem;
+        }
+
+        /* ==================== Login Options ==================== */
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            flex-wrap: wrap;
+            user-select: none;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .remember-me span {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .forgot-password {
+            color: var(--primary-color);
+            text-decoration: none;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* ==================== Login Button ==================== */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 50px;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: inherit;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .btn-login i {
+            font-size: 1.1rem;
+        }
+
+        /* ==================== Login Error ==================== */
+        .login-error {
+            display: none;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            word-wrap: break-word;
+            animation: shake 0.5s ease;
+        }
+
+        .login-error.show {
+            display: flex;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* ==================== Login Footer ==================== */
+        .login-footer {
+            margin-top: 25px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .back-link {
+            color: var(--light-text);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: var(--primary-color);
+            background: var(--light-background);
+        }
+
+        .login-footer p {
+            font-size: 0.85rem;
+            color: var(--light-text);
+            word-wrap: break-word;
+        }
+
+        /* ==================== Responsive Design ==================== */
+        @media (max-width: 768px) {
+            .login-box {
+                padding: 30px 25px;
+                border-radius: 15px;
+            }
+
+            .login-header i {
+                font-size: 3rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .login-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 15px;
+            }
+
+            .login-box {
+                padding: 25px 20px;
+                border-radius: 12px;
+            }
+
+            .login-header i {
+                font-size: 2.5rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.2rem;
+            }
+
+            .login-form input[type="text"],
+            .login-form input[type="password"] {
+                padding: 12px;
+                font-size: 0.95rem;
+                min-height: 45px;
+            }
+
+            .btn-login {
+                padding: 12px;
+                font-size: 0.95rem;
+                min-height: 45px;
+            }
+
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+                min-height: 36px;
+                min-width: 45px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .login-box {
+                padding: 20px 15px;
+            }
+
+            .login-header i {
+                font-size: 2rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Touch Device Optimizations */
+        @media (hover: none) {
+            .btn-login:hover {
+                transform: none;
+                box-shadow: none;
+            }
+        }
+
+        /* iOS Specific Fixes */
+        @supports (-webkit-touch-callout: none) {
+            .login-container {
+                min-height: -webkit-fill-available;
+            }
+            
+            input[type="text"],
+            input[type="password"] {
+                font-size: 16px !important;
+            }
+        }
+
+        /* Prevent horizontal scroll */
+        body,
+        .login-container,
+        .login-box,
+        .login-form,
+        .login-header,
+        .login-footer {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
