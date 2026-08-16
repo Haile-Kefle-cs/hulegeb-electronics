@@ -1,1303 +1,810 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin Panel - Hulegeb Electronics</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* ==================== Admin Styles ==================== */
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #1e40af;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --text-color: #1f2937;
-            --light-text: #6b7280;
-            --border-color: #e5e7eb;
-            --background: #f3f4f6;
-            --sidebar-width: 250px;
-            --sidebar-collapsed: 70px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            overflow-x: hidden;
-            width: 100%;
-            max-width: 100%;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--background);
-            color: var(--text-color);
-            overflow-x: hidden;
-            width: 100%;
-            max-width: 100%;
-            position: relative;
-        }
-
-        /* ==================== Admin Layout ==================== */
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-            position: relative;
-            width: 100%;
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-
-        /* ==================== Sidebar ==================== */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: #1f2937;
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .sidebar.collapsed {
-            width: var(--sidebar-collapsed);
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            overflow: hidden;
-        }
-
-        .sidebar-header i {
-            font-size: 2rem;
-            color: var(--primary-color);
-        }
-
-        .sidebar-header h2 {
-            font-size: 1.1rem;
-            margin-top: 10px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .sidebar.collapsed .sidebar-header h2,
-        .sidebar.collapsed .sidebar-menu li span,
-        .sidebar.collapsed .sidebar-footer span {
-            display: none;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            padding: 20px 0;
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .sidebar-menu li {
-            padding: 15px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            white-space: nowrap;
-            min-height: 44px;
-            overflow: hidden;
-        }
-
-        .sidebar-menu li:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-menu li.active {
-            background: var(--primary-color);
-        }
-
-        .sidebar-menu li i {
-            width: 20px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .sidebar-menu li span {
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .sidebar-footer {
-            padding: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            overflow: hidden;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            text-decoration: none;
-            padding: 10px;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            margin-bottom: 5px;
-            cursor: pointer;
-            width: 100%;
-            background: none;
-            border: none;
-            font-size: 1rem;
-            min-height: 44px;
-            overflow: hidden;
-        }
-
-        .sidebar-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-link span {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .logout-btn {
-            color: #f87171;
-        }
-
-        /* ==================== Main Content ==================== */
-        .main-content {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            padding: 20px;
-            transition: all 0.3s ease;
-            min-height: 100vh;
-            width: calc(100% - var(--sidebar-width));
-            max-width: calc(100% - var(--sidebar-width));
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        .main-content.expanded {
-            margin-left: var(--sidebar-collapsed);
-            width: calc(100% - var(--sidebar-collapsed));
-            max-width: calc(100% - var(--sidebar-collapsed));
-        }
-
-        /* ==================== Top Bar ==================== */
-        .top-bar {
-            background: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            flex-wrap: nowrap;
-            gap: 10px;
-            width: 100%;
-            max-width: 100%;
-            overflow: hidden;
-        }
-
-        .top-bar h1 {
-            font-size: 1.3rem;
-            flex: 1;
-            text-align: center;
-            margin: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-color);
-            padding: 10px;
-            min-height: 44px;
-            min-width: 44px;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .menu-toggle:hover {
-            background: var(--background);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--light-text);
-            font-size: 0.9rem;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-
-        .user-info i {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            flex-shrink: 0;
-        }
-
-        .user-info span {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* ==================== Pages ==================== */
-        .page {
-            display: none;
-            width: 100%;
-            max-width: 100%;
-            overflow: hidden;
-        }
-
-        .page.active {
-            display: block !important;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ==================== Stats Grid ==================== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 100%;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            overflow: hidden;
-            min-width: 0;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card i {
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .stat-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-            word-wrap: break-word;
-        }
-
-        .stat-card p {
-            color: var(--light-text);
-            font-size: 0.9rem;
-            word-wrap: break-word;
-        }
-
-        /* ==================== Page Header ==================== */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-            width: 100%;
-            max-width: 100%;
-            overflow: hidden;
-        }
-
-        .page-header h1,
-        .page-header h2 {
-            font-size: 1.5rem;
-            margin: 0;
-            flex: 1;
-            word-wrap: break-word;
-            min-width: 0;
-        }
-
-        .btn-add {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            min-height: 44px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .btn-add:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-
-        .btn-add:active {
-            transform: translateY(0);
-        }
-
-        .btn-save {
-            background: var(--success-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            min-height: 44px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-        }
-
-        .btn-save:hover {
-            background: #059669;
-        }
-
-        .btn-cancel {
-            background: var(--light-text);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            min-height: 44px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-        }
-
-        .btn-cancel:hover {
-            background: #4b5563;
-        }
-
-        /* ==================== Table ==================== */
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            -webkit-overflow-scrolling: touch;
-            width: 100%;
-            max-width: 100%;
-            position: relative;
-        }
-
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-            max-width: 100%;
-        }
-
-        .admin-table th,
-        .admin-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.9rem;
-            word-wrap: break-word;
-            max-width: 200px;
-        }
-
-        .admin-table th {
-            background: #f9fafb;
-            font-weight: 600;
-            white-space: nowrap;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-
-        .admin-table tr:hover {
-            background: #f9fafb;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: inline-block;
-            white-space: nowrap;
-        }
-
-        .status-active {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-inactive {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .action-btn {
-            padding: 8px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 0 2px;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            min-height: 40px;
-            min-width: 40px;
-            white-space: nowrap;
-        }
-
-        .btn-edit {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .btn-edit:hover {
-            background: #1e40af;
-            color: white;
-        }
-
-        .btn-delete {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .btn-delete:hover {
-            background: #991b1b;
-            color: white;
-        }
-
-        .btn-toggle {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .btn-toggle:hover {
-            background: #92400e;
-            color: white;
-        }
-
-        /* ==================== Modal ==================== */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 10px;
-            padding: 25px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 85vh;
-            overflow-y: auto;
-            overflow-x: hidden;
-            position: relative;
-            animation: slideIn 0.3s ease;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-content h2 {
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-            word-wrap: break-word;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 2rem;
-            cursor: pointer;
-            color: var(--light-text);
-            padding: 5px;
-            line-height: 1;
-            min-height: 44px;
-            min-width: 44px;
-            z-index: 10;
-            flex-shrink: 0;
-        }
-
-        .close-modal:hover {
-            color: var(--text-color);
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-            width: 100%;
-        }
-
-        .modal-actions button {
-            flex: 1;
-            min-width: 120px;
-        }
-
-        /* ==================== Form ==================== */
-        .form-group {
-            margin-bottom: 15px;
-            width: 100%;
-            max-width: 100%;
-            overflow: hidden;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            word-wrap: break-word;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 0.9rem;
-            font-family: inherit;
-            -webkit-appearance: none;
-            appearance: none;
-            min-height: 44px;
-            max-width: 100%;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        /* ==================== Settings Form ==================== */
-        .settings-form {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            max-width: 500px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            width: 100%;
-        }
-
-        /* ==================== Sidebar Overlay ==================== */
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
-        }
-
-        .sidebar-overlay.active {
-            display: block;
-        }
-
-        /* ==================== Toast ==================== */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--success-color);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 5px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 3000;
-            max-width: calc(100% - 40px);
-            word-wrap: break-word;
-        }
-
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        /* ==================== Responsive Design ==================== */
-        @media (max-width: 1024px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: var(--sidebar-width);
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                position: fixed;
-                z-index: 1000;
-                max-width: 85%;
-            }
-
-            .sidebar.mobile-open {
-                transform: translateX(0);
-                width: var(--sidebar-width);
-                max-width: 85%;
-            }
-
-            .sidebar-header h2,
-            .sidebar-menu li span,
-            .sidebar-footer span {
-                display: inline !important;
-            }
-
-            .sidebar-menu li {
-                justify-content: flex-start;
-                padding: 15px 20px;
-            }
-
-            .main-content,
-            .main-content.expanded {
-                margin-left: 0;
-                padding: 15px;
-                width: 100%;
-                max-width: 100%;
-            }
-
-            .menu-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .top-bar {
-                padding: 12px 15px;
-                position: sticky;
-                top: 0;
-                z-index: 100;
-                background: white;
-                flex-wrap: nowrap;
-                gap: 8px;
-            }
-
-            .top-bar h1 {
-                font-size: 1.1rem;
-                text-align: center;
-            }
-
-            .user-info span {
-                display: none;
-            }
-
-            .user-info {
-                flex-shrink: 0;
-            }
-
-            .user-info i {
-                font-size: 1.8rem;
-            }
-
-            .page-header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 10px;
-            }
-
-            .page-header h1,
-            .page-header h2 {
-                font-size: 1.3rem;
-                text-align: center;
-            }
-
-            .btn-add {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-
-            .stat-card {
-                padding: 15px;
-            }
-
-            .stat-card h3 {
-                font-size: 1.5rem;
-            }
-
-            .stat-card i {
-                font-size: 1.5rem;
-            }
-
-            .modal {
-                padding: 10px;
-            }
-
-            .modal-content {
-                width: 100%;
-                padding: 20px;
-                margin: 0;
-                max-height: 90vh;
-                border-radius: 8px;
-            }
-
-            .modal-actions {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .modal-actions button {
-                width: 100%;
-                flex: none;
-            }
-
-            .action-btn {
-                padding: 8px;
-                font-size: 0.85rem;
-                min-height: 40px;
-                min-width: 40px;
-            }
-
-            .settings-form {
-                padding: 20px;
-            }
-
-            .toast {
-                bottom: 10px;
-                right: 10px;
-                left: 10px;
-                text-align: center;
-                max-width: none;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-            }
-
-            .stat-card {
-                padding: 12px;
-            }
-
-            .stat-card h3 {
-                font-size: 1.3rem;
-            }
-
-            .stat-card p {
-                font-size: 0.8rem;
-            }
-
-            .admin-table th,
-            .admin-table td {
-                padding: 8px;
-                font-size: 0.8rem;
-            }
-
-            .status-badge {
-                padding: 4px 8px;
-                font-size: 0.75rem;
-            }
-
-            .modal-content {
-                padding: 15px;
-                max-height: 92vh;
-            }
-
-            .modal-content h2 {
-                font-size: 1.2rem;
-                margin-bottom: 15px;
-            }
-
-            .page-header h1,
-            .page-header h2 {
-                font-size: 1.2rem;
-            }
-
-            .btn-add,
-            .btn-save,
-            .btn-cancel {
-                padding: 10px 16px;
-                font-size: 0.85rem;
-                min-height: 40px;
-            }
-
-            .form-group label {
-                font-size: 0.85rem;
-            }
-
-            .form-group input,
-            .form-group textarea,
-            .form-group select {
-                padding: 8px;
-                font-size: 0.85rem;
-                min-height: 40px;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .top-bar {
-                padding: 10px;
-            }
-
-            .top-bar h1 {
-                font-size: 1rem;
-            }
-
-            .main-content,
-            .main-content.expanded {
-                padding: 10px;
-            }
-
-            .modal-content {
-                padding: 12px;
-            }
-        }
-
-        /* Touch Device Optimizations */
-        @media (hover: none) {
-            .btn-add:hover,
-            .btn-save:hover,
-            .btn-cancel:hover,
-            .action-btn:hover {
-                transform: none;
-            }
-
-            .stat-card:hover {
-                transform: none;
-            }
-        }
-
-        /* Landscape Mode */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .modal-content {
-                max-height: 85vh;
-                overflow-y: auto;
-            }
-
-            .sidebar {
-                width: 80%;
-                max-width: 320px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        /* iOS Specific Fixes */
-        @supports (-webkit-touch-callout: none) {
-            .admin-container {
-                min-height: -webkit-fill-available;
-            }
-
-            input, 
-            select, 
-            textarea {
-                font-size: 16px !important;
-            }
-        }
-
-        /* Prevent horizontal scroll */
-        body,
-        html,
-        .admin-container,
-        .main-content,
-        .page,
-        .page-header,
-        .stats-grid,
-        .settings-form {
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Super Admin Panel - Hulegeb Electronics</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+/* Reset & Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+}
+body {
+  background: #f3f4f6;
+  color: #1f2937;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+}
+
+/* CSS Variables */
+:root {
+  --primary-color: #2563eb;
+  --secondary-color: #1e40af;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  --text-color: #1f2937;
+  --light-text: #6b7280;
+  --border-color: #e5e7eb;
+  --background: #f3f4f6;
+  --sidebar-width: 250px;
+  --sidebar-collapsed: 70px;
+}
+
+/* Utility classes */
+.hide {
+  display: none !important;
+}
+
+.flex {
+  display: flex;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.align-center {
+  align-items: center;
+}
+.gap-10 {
+  gap: 10px;
+}
+.gap-15 {
+  gap: 15px;
+}
+.gap-20 {
+  gap: 20px;
+}
+.w-100 {
+  width: 100%;
+}
+.max-w-100 {
+  max-width: 100%;
+}
+
+/* Layout */
+.admin-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: #1f2937;
+  color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  z-index: 999;
+  overflow: hidden;
+}
+.sidebar.collapsed {
+  width: var(--sidebar-collapsed);
+}
+.sidebar-header {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-header i {
+  font-size: 2rem;
+  color: var(--primary-color);
+}
+.sidebar-header h2 {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sidebar-menu {
+  flex: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+}
+.sidebar-menu li {
+  padding: 15px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.3s;
+  min-height: 44px;
+}
+.sidebar-menu li:hover,
+.sidebar-menu li.active {
+  background: rgba(255,255,255,0.1);
+}
+.sidebar-menu li i {
+  min-width: 20px;
+  text-align: center;
+}
+.sidebar-menu li span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background 0.3s;
+  text-decoration: none;
+  color: #fff;
+  width: 100%;
+}
+.sidebar-link:hover {
+  background: rgba(255,255,255,0.1);
+}
+.logout-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #f87171;
+  cursor: pointer;
+}
+.logout-btn:hover {
+  color: #ef4444;
+}
+
+/* Main Content */
+.main {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s ease;
+}
+.main.expanded {
+  margin-left: var(--sidebar-collapsed);
+}
+
+.top-bar {
+  background: #fff;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+.menu-toggle:hover {
+  background: var(--background);
+}
+.page-title {
+  flex: 1;
+  text-align: center;
+  font-size: 1.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--light-text);
+  flex-shrink: 0;
+}
+
+/* Pages */
+.page {
+  display: none;
+  padding: 20px;
+  width: 100%;
+}
+.page.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+}
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.stat-card i {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+.stat-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+.stat-card p {
+  color: var(--light-text);
+  font-size: 0.9rem;
+}
+
+/* Page Header & Buttons */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.page-header h2 {
+  font-size: 1.5rem;
+}
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+.btn-add {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+.btn-add:hover {
+  background-color: var(--secondary-color);
+}
+.btn-save {
+  background-color: var(--success-color);
+  color: #fff;
+}
+.btn-save:hover {
+  background-color: #059669;
+}
+.btn-cancel {
+  background-color: var(--light-text);
+  color: #fff;
+}
+.btn-cancel:hover {
+  background-color: #4b5563;
+}
+
+/* Table Styles */
+.table-container {
+  background: #fff;
+  border-radius: 10px;
+  overflow-x: auto;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.admin-table th, .admin-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  max-width: 200px;
+  word-wrap: break-word;
+}
+.admin-table th {
+  background: #f9fafb;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  font-weight: 600;
+}
+.admin-table tr:hover {
+  background: #f9fafb;
+}
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.status-active {
+  background: #d1fae5;
+  color: #065f46;
+}
+.status-inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.action-btn {
+  padding: 8px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  min-height: 40px;
+  min-width: 40px;
+}
+.btn-edit {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.btn-edit:hover {
+  background: #1e40af;
+  color: #fff;
+}
+.btn-delete {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.btn-delete:hover {
+  background: #991b1b;
+  color: #fff;
+}
+.btn-toggle {
+  background: #fef3c7;
+  color: #92400e;
+}
+.btn-toggle:hover {
+  background: #92400e;
+  color: #fff;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+}
+.modal.active {
+  display: flex;
+}
+.modal-content {
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideIn 0.3s ease;
+}
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.close-modal {
+  position: absolute;
+  top: 10px; right: 15px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--light-text);
+}
+.close-modal:hover {
+  color: var(--text-color);
+}
+h2 {
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+}
+.form-group {
+  margin-bottom: 15px;
+  width: 100%;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+input, textarea, select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Responsive styles */
+@media(max-width:1024px){
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}
+@media(max-width:768px){
+  /* Sidebar */
+  .sidebar {
+    width: 250px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  /* Main */
+  .main {
+    margin-left: 0;
+  }
+  /* Top bar toggle button */
+  .menu-toggle {
+    display: block;
+  }
+}
+@media(max-width:480px){
+  /* Adjust stats grid for small screens */
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  /* Modal max-height */
+  .modal-content {
+    max-height: 90vh;
+  }
+}
+</style>
 </head>
 <body>
-    <!-- Sidebar Overlay for Mobile -->
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <i class="fas fa-microchip"></i>
-                <h2>Hulegeb Admin</h2>
-            </div>
-            
-            <ul class="sidebar-menu">
-                <li class="active" data-page="dashboard" onclick="switchPage('dashboard'); closeMobileSidebar();">
-                    <i class="fas fa-dashboard"></i> <span>Dashboard</span>
-                </li>
-                <li data-page="users" onclick="switchPage('users'); closeMobileSidebar();">
-                    <i class="fas fa-users"></i> <span>Manage Users</span>
-                </li>
-                <li data-page="admins" onclick="switchPage('admins'); closeMobileSidebar();">
-                    <i class="fas fa-user-shield"></i> <span>Manage Admins</span>
-                </li>
-                <li data-page="products" onclick="switchPage('products'); closeMobileSidebar();">
-                    <i class="fas fa-box"></i> <span>View Products</span>
-                </li>
-                <li data-page="settings" onclick="switchPage('settings'); closeMobileSidebar();">
-                    <i class="fas fa-cog"></i> <span>Settings</span>
-                </li>
-            </ul>
-            
-            <div class="sidebar-footer">
-                <a href="index.html" class="sidebar-link">
-                    <i class="fas fa-home"></i> <span>Back to Website</span>
-                </a>
-                <button class="sidebar-link logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-                </button>
-            </div>
+<!-- Sidebar overlay for mobile -->
+<div id="sidebarOverlay" style="display:none; position:fixed; inset:0; background: rgba(0,0,0,0.5); z-index:998;" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <i class="fas fa-microchip"></i>
+    <h2>Hulegeb Admin</h2>
+  </div>
+  <ul class="sidebar-menu">
+    <li class="active" data-page="dashboard" onclick="switchPage('dashboard')"> <i class="fas fa-dashboard"></i> <span>Dashboard</span> </li>
+    <li data-page="users" onclick="switchPage('users')"> <i class="fas fa-users"></i> <span>Manage Users</span> </li>
+    <li data-page="admins" onclick="switchPage('admins')"> <i class="fas fa-user-shield"></i> <span>Manage Admins</span> </li>
+    <li data-page="products" onclick="switchPage('products')"> <i class="fas fa-box"></i> <span>View Products</span> </li>
+    <li data-page="settings" onclick="switchPage('settings')"> <i class="fas fa-cog"></i> <span>Settings</span> </li>
+  </ul>
+  <div class="sidebar-footer">
+    <a href="index.html" class="sidebar-link"><i class="fas fa-home"></i> <span>Back to Website</span></a>
+    <button class="sidebar-link logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></button>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="main" id="main">
+  <!-- Top bar -->
+  <div class="top-bar">
+    <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+    <div class="user-info">
+      <span id="currentUser">Super Admin</span>
+      <i class="fas fa-user-circle"></i>
+    </div>
+  </div>
+
+  <!-- Pages -->
+  <div id="pagesContainer">
+
+    <!-- Dashboard -->
+    <div class="page active" id="dashboardPage">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <i class="fas fa-users"></i>
+          <h3 id="totalUsers">0</h3>
+          <p>Total Users</p>
         </div>
-
-        <!-- Main Content -->
-        <div class="main-content" id="main-content">
-            <div class="top-bar">
-                <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <h1 id="page-title">Dashboard</h1>
-                <div class="user-info">
-                    <span id="current-user">Super Admin</span>
-                    <i class="fas fa-user-circle"></i>
-                </div>
-            </div>
-
-            <!-- Dashboard Page -->
-            <div class="page active" id="dashboard-page">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <i class="fas fa-users"></i>
-                        <h3 id="total-users">0</h3>
-                        <p>Total Users</p>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-user-shield"></i>
-                        <h3 id="total-admins">0</h3>
-                        <p>Total Admins</p>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-box"></i>
-                        <h3 id="total-products">0</h3>
-                        <p>Products</p>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-shopping-cart"></i>
-                        <h3 id="total-orders">0</h3>
-                        <p>Orders</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Users Page -->
-            <div class="page" id="users-page">
-                <div class="page-header">
-                    <h2>Manage Users</h2>
-                    <button class="btn-add" onclick="showAddUserModal()">
-                        <i class="fas fa-plus"></i> Add User
-                    </button>
-                </div>
-                <div class="table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Created</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-table-body"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Admins Page -->
-            <div class="page" id="admins-page">
-                <div class="page-header">
-                    <h2>Manage Admins</h2>
-                    <button class="btn-add" onclick="showAddAdminModal()">
-                        <i class="fas fa-plus"></i> Add Admin
-                    </button>
-                </div>
-                <div class="table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Username</th>
-                                <th>Name</th>
-                                <th>Status</th>
-                                <th>Created</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admins-table-body"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Products Page -->
-            <div class="page" id="products-page">
-                <div class="page-header">
-                    <h2>All Products</h2>
-                </div>
-                <div class="table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Category</th>
-                                <th>Price</th>
-                                <th>Stock</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="super-products-table-body"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Settings Page -->
-            <div class="page" id="settings-page">
-                <h2>Settings</h2>
-                <div class="settings-form">
-                    <div class="form-group">
-                        <label>Store Name</label>
-                        <input type="text" id="store-name" value="Hulegeb Electronics">
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="store-email" value="hulgebmereja2017@gmail.com">
-                    </div>
-                    <div class="form-group">
-                        <label>Phone</label>
-                        <input type="text" id="store-phone" value="+251 911 234 567">
-                    </div>
-                    <div class="form-group">
-                        <label>Location</label>
-                        <input type="text" id="store-location" value="Debre Berhan, Ethiopia">
-                    </div>
-                    <button class="btn-save" onclick="saveSettings()">Save Settings</button>
-                </div>
-            </div>
+        <div class="stat-card">
+          <i class="fas fa-user-shield"></i>
+          <h3 id="totalAdmins">0</h3>
+          <p>Total Admins</p>
         </div>
+        <div class="stat-card">
+          <i class="fas fa-box"></i>
+          <h3 id="totalProducts">0</h3>
+          <p>Products</p>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-shopping-cart"></i>
+          <h3 id="totalOrders">0</h3>
+          <p>Orders</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Add User Modal -->
-    <div class="modal" id="add-user-modal">
-        <div class="modal-content">
-            <h2>Add New User</h2>
-            <form id="add-user-form">
-                <div class="form-group">
-                    <label>Full Name *</label>
-                    <input type="text" id="user-name" required>
-                </div>
-                <div class="form-group">
-                    <label>Email *</label>
-                    <input type="email" id="user-email" required>
-                </div>
-                <div class="form-group">
-                    <label>Password *</label>
-                    <input type="password" id="user-password" required>
-                </div>
-                <button type="submit" class="btn-save">Add User</button>
-            </form>
-            <button class="close-modal" onclick="closeModal('add-user-modal')">&times;</button>
-        </div>
+    <!-- Users -->
+    <div class="page" id="usersPage">
+      <div class="page-header">
+        <h2>Manage Users</h2>
+        <button class="btn btn-add" onclick="showModal('addUserModal')"><i class="fas fa-plus"></i> Add User</button>
+      </div>
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody"></tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Add Admin Modal -->
-    <div class="modal" id="add-admin-modal">
-        <div class="modal-content">
-            <h2>Add New Admin</h2>
-            <form id="add-admin-form">
-                <div class="form-group">
-                    <label>Username *</label>
-                    <input type="text" id="admin-username" required>
-                </div>
-                <div class="form-group">
-                    <label>Full Name *</label>
-                    <input type="text" id="admin-name" required>
-                </div>
-                <div class="form-group">
-                    <label>Password *</label>
-                    <input type="password" id="admin-password" required>
-                </div>
-                <button type="submit" class="btn-save">Add Admin</button>
-            </form>
-            <button class="close-modal" onclick="closeModal('add-admin-modal')">&times;</button>
-        </div>
+    <!-- Admins -->
+    <div class="page" id="adminsPage">
+      <div class="page-header">
+        <h2>Manage Admins</h2>
+        <button class="btn btn-add" onclick="showModal('addAdminModal')"><i class="fas fa-plus"></i> Add Admin</button>
+      </div>
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Username</th><th>Name</th><th>Status</th><th>Created</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminsTableBody"></tbody>
+        </table>
+      </div>
     </div>
 
-    <script src="js/admin.js"></script>
-    <script src="js/super-admin.js"></script>
-    
-    <script>
-        // Mobile sidebar functions
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            
-            if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('mobile-open');
-                overlay.classList.toggle('active');
-            } else {
-                sidebar.classList.toggle('collapsed');
-                document.getElementById('main-content').classList.toggle('expanded');
-            }
-        }
-        
-        function closeMobileSidebar() {
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.getElementById('sidebar-overlay');
-                sidebar.classList.remove('mobile-open');
-                overlay.classList.remove('active');
-            }
-        }
-        
-        // Close sidebar on resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.getElementById('sidebar-overlay');
-                sidebar.classList.remove('mobile-open');
-                overlay.classList.remove('active');
-            }
-        });
-        
-        // Modal functions
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-        
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        }
-        
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
-        
-        // Escape key closes modals
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                const openModals = document.querySelectorAll('.modal.active');
-                openModals.forEach(modal => {
-                    modal.classList.remove('active');
-                });
-                document.body.style.overflow = '';
-            }
-        });
-    </script>
+    <!-- Products -->
+    <div class="page" id="productsPage">
+      <div class="page-header">
+        <h2>All Products</h2>
+      </div>
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="productsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="page" id="settingsPage">
+      <h2>Settings</h2>
+      <div class="settings-form">
+        <div class="form-group">
+          <label>Store Name</label>
+          <input type="text" id="storeName" value="Hulegeb Electronics" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="storeEmail" value="hulgebmereja2017@gmail.com" />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" id="storePhone" value="+251 911 234 567" />
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="storeLocation" value="Debre Berhan, Ethiopia" />
+        </div>
+        <button class="btn btn-save" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modals -->
+<!-- Add User Modal -->
+<div class="modal" id="addUserModal">
+  <div class="modal-content">
+    <h2>Add New User</h2>
+    <form id="addUserForm">
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="userFullName" required />
+      </div>
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" id="userEmail" required />
+      </div>
+      <div class="form-group">
+        <label>Password *</label>
+        <input type="password" id="userPassword" required />
+      </div>
+      <button type="submit" class="btn btn-save">Add User</button>
+    </form>
+    <button class="close-modal" onclick="closeModal('addUserModal')">&times;</button>
+  </div>
+</div>
+
+<!-- Add Admin Modal -->
+<div class="modal" id="addAdminModal">
+  <div class="modal-content">
+    <h2>Add New Admin</h2>
+    <form id="addAdminForm">
+      <div class="form-group">
+        <label>Username *</label>
+        <input type="text" id="adminUsername" required />
+      </div>
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="adminFullName" required />
+      </div>
+      <div class="form-group">
+        <label>Password *</label>
+        <input type="password" id="adminPassword" required />
+      </div>
+      <button type="submit" class="btn btn-save">Add Admin</button>
+    </form>
+    <button class="close-modal" onclick="closeModal('addAdminModal')">&times;</button>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script>
+/* Sidebar toggle for mobile */
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (window.innerWidth <= 768) {
+    sidebar.classList.toggle('mobile-open');
+    overlay.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
+  } else {
+    sidebar.classList.toggle('collapsed');
+    document.getElementById('main').classList.toggle('expanded');
+  }
+}
+
+/* Switch pages */
+function switchPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelector(`#${pageId}`).classList.add('active');
+
+  // Update page title
+  const pageTitles = {
+    'dashboardPage': 'Dashboard',
+    'usersPage': 'Manage Users',
+    'adminsPage': 'Manage Admins',
+    'productsPage': 'All Products',
+    'settingsPage': 'Settings'
+  };
+  document.getElementById('pageTitle').innerText = pageTitles[pageId] || '';
+
+  // Update active menu item
+  document.querySelectorAll('.sidebar-menu li').forEach(li => {
+    li.classList.toggle('active', li.dataset.page === pageId.replace('Page',''));
+  });
+}
+
+/* Show modal */
+function showModal(modalId) {
+  document.getElementById(modalId).classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+/* Close modal */
+function closeModal(modalId) {
+  document.getElementById(modalId).classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+/* Close modal when clicking outside content */
+document.querySelectorAll('.modal').forEach(modal => {
+  modal.addEventListener('click', e => {
+    if(e.target === modal) {
+      closeModal(modal.id);
+    }
+  });
+});
+/* Close on ESC */
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') {
+    document.querySelectorAll('.modal.active').forEach(m => closeModal(m.id));
+  }
+});
+
+/* Save Settings */
+function saveSettings() {
+  alert('Settings saved!');
+  // Save logic here
+}
+
+/* Logout */
+function logout() {
+  alert('Logging out...');
+  // Redirect or logout logic
+}
+
+/* Example: Populate Tables (Dummy Data) */
+function populateSampleData() {
+  // Users
+  const users = [
+    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'User', status: 'Active', created: '2023-01-01' },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', status: 'Inactive', created: '2023-02-15' }
+  ];
+  const usersBody = document.getElementById('usersTableBody');
+  users.forEach(u => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${u.id}</td>
+      <td>${u.name}</td>
+      <td>${u.email}</td>
+      <td>${u.role}</td>
+      <td><span class="status-badge status-${u.status.toLowerCase()}">${u.status}</span></td>
+      <td>${u.created}</td>
+      <td>
+        <button class="action-btn btn-edit" onclick="editUser(${u.id})"><i class="fas fa-edit"></i></button>
+        <button class="action-btn btn-delete" onclick="deleteUser(${u.id})"><i class="fas fa-trash"></i></button>
+      </td>
+    `;
+    usersBody.appendChild(row);
+  });
+}
+function editUser(id) { alert('Edit user ' + id); }
+function deleteUser(id) { alert('Delete user ' + id); }
+
+// Call populate on load
+window.onload = () => {
+  populateSampleData();
+};
+</script>
+
 </body>
 </html>
