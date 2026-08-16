@@ -45,6 +45,7 @@
             max-width: 100%;
             position: relative;
             -webkit-overflow-scrolling: touch;
+            min-height: 100vh;
         }
 
         /* ==================== Login Container ==================== */
@@ -70,6 +71,7 @@
             height: 200%;
             background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
             animation: rotate 30s linear infinite;
+            pointer-events: none;
         }
 
         @keyframes rotate {
@@ -110,6 +112,7 @@
             gap: 10px;
             margin-bottom: 25px;
             flex-wrap: wrap;
+            width: 100%;
         }
 
         .language-switcher-admin span {
@@ -127,11 +130,12 @@
             padding: 8px 16px;
             transition: all 0.3s ease;
             border-radius: 25px;
-            min-height: 40px;
+            min-height: 44px;
             min-width: 50px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            font-family: inherit;
         }
 
         .lang-btn.active {
@@ -147,6 +151,10 @@
             color: var(--primary-color);
         }
 
+        .lang-btn:active {
+            transform: scale(0.95);
+        }
+
         /* ==================== Login Header ==================== */
         .login-header {
             text-align: center;
@@ -159,6 +167,7 @@
             color: var(--primary-color);
             margin-bottom: 15px;
             animation: bounce 2s infinite;
+            display: inline-block;
         }
 
         @keyframes bounce {
@@ -206,6 +215,7 @@
             font-size: 1rem;
             width: 20px;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .password-wrapper {
@@ -214,7 +224,8 @@
         }
 
         .login-form input[type="text"],
-        .login-form input[type="password"] {
+        .login-form input[type="password"],
+        .login-form input[type="email"] {
             width: 100%;
             padding: 14px;
             border: 2px solid var(--border-color);
@@ -227,10 +238,12 @@
             max-width: 100%;
             font-family: inherit;
             background: #f9fafb;
+            color: var(--text-color);
         }
 
         .login-form input[type="text"]:focus,
-        .login-form input[type="password"]:focus {
+        .login-form input[type="password"]:focus,
+        .login-form input[type="email"]:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
@@ -266,6 +279,10 @@
             color: var(--primary-color);
         }
 
+        .toggle-password:active {
+            transform: translateY(-50%) scale(0.9);
+        }
+
         .toggle-password i {
             font-size: 1.1rem;
         }
@@ -289,6 +306,9 @@
             cursor: pointer;
             flex-wrap: wrap;
             user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         .remember-me input[type="checkbox"] {
@@ -296,6 +316,7 @@
             height: 18px;
             cursor: pointer;
             accent-color: var(--primary-color);
+            flex-shrink: 0;
         }
 
         .remember-me span {
@@ -309,6 +330,7 @@
             white-space: nowrap;
             font-size: 0.9rem;
             transition: all 0.3s ease;
+            padding: 5px;
         }
 
         .forgot-password:hover {
@@ -366,6 +388,7 @@
             font-size: 0.9rem;
             word-wrap: break-word;
             animation: shake 0.5s ease;
+            width: 100%;
         }
 
         .login-error.show {
@@ -449,7 +472,8 @@
             }
 
             .login-form input[type="text"],
-            .login-form input[type="password"] {
+            .login-form input[type="password"],
+            .login-form input[type="email"] {
                 padding: 12px;
                 font-size: 0.95rem;
                 min-height: 45px;
@@ -464,7 +488,7 @@
             .lang-btn {
                 padding: 6px 12px;
                 font-size: 0.85rem;
-                min-height: 36px;
+                min-height: 40px;
                 min-width: 45px;
             }
         }
@@ -481,6 +505,10 @@
             .login-header h1 {
                 font-size: 1.1rem;
             }
+
+            .login-options {
+                gap: 5px;
+            }
         }
 
         /* Touch Device Optimizations */
@@ -488,6 +516,10 @@
             .btn-login:hover {
                 transform: none;
                 box-shadow: none;
+            }
+
+            .lang-btn:hover {
+                background: none;
             }
         }
 
@@ -498,7 +530,8 @@
             }
             
             input[type="text"],
-            input[type="password"] {
+            input[type="password"],
+            input[type="email"] {
                 font-size: 16px !important;
             }
         }
@@ -509,9 +542,17 @@
         .login-box,
         .login-form,
         .login-header,
-        .login-footer {
+        .login-footer,
+        .login-options,
+        .language-switcher-admin {
             max-width: 100%;
             overflow-x: hidden;
+        }
+
+        /* Ensure all elements stay within bounds */
+        img {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
@@ -540,7 +581,7 @@
                     <label for="password"><i class="fas fa-lock"></i> <span data-i18n="password">Password</span></label>
                     <div class="password-wrapper">
                         <input type="password" id="password" required placeholder="Enter password" data-i18n-placeholder="passwordPlaceholder">
-                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                        <button type="button" class="toggle-password" onclick="togglePassword()" aria-label="Toggle password visibility">
                             <i class="fas fa-eye" id="eye-icon"></i>
                         </button>
                     </div>
@@ -574,5 +615,21 @@
 
     <script src="js/admin-translations.js"></script>
     <script src="js/admin.js"></script>
+    
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.className = 'fas fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.className = 'fas fa-eye';
+            }
+        }
+    </script>
 </body>
 </html>
